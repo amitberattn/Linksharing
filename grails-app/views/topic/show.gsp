@@ -1,102 +1,37 @@
 
-<%@ page import="com.linksharing.Topic" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-		<meta name="layout" content="main">
-		<g:set var="entityName" value="${message(code: 'topic.label', default: 'Topic')}" />
-		<title><g:message code="default.show.label" args="[entityName]" /></title>
-	</head>
-	<body>
-		<a href="#show-topic" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
-		<div id="show-topic" class="content scaffold-show" role="main">
-			<h1><g:message code="default.show.label" args="[entityName]" /></h1>
-			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
-			</g:if>
-			<ol class="property-list topic">
-			
-				<g:if test="${topicInstance?.name}">
-				<li class="fieldcontain">
-					<span id="name-label" class="property-label"><g:message code="topic.name.label" default="Name" /></span>
-					
-						<span class="property-value" aria-labelledby="name-label"><g:fieldValue bean="${topicInstance}" field="name"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.visibility}">
-				<li class="fieldcontain">
-					<span id="visibility-label" class="property-label"><g:message code="topic.visibility.label" default="Visibility" /></span>
-					
-						<span class="property-value" aria-labelledby="visibility-label"><g:fieldValue bean="${topicInstance}" field="visibility"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.dateCreated}">
-				<li class="fieldcontain">
-					<span id="dateCreated-label" class="property-label"><g:message code="topic.dateCreated.label" default="Date Created" /></span>
-					
-						<span class="property-value" aria-labelledby="dateCreated-label"><g:formatDate date="${topicInstance?.dateCreated}" /></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.lastUpdated}">
-				<li class="fieldcontain">
-					<span id="lastUpdated-label" class="property-label"><g:message code="topic.lastUpdated.label" default="Last Updated" /></span>
-					
-						<span class="property-value" aria-labelledby="lastUpdated-label"><g:formatDate date="${topicInstance?.lastUpdated}" /></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.createdBy}">
-				<li class="fieldcontain">
-					<span id="createdBy-label" class="property-label"><g:message code="topic.createdBy.label" default="Created By" /></span>
-					
-						<span class="property-value" aria-labelledby="createdBy-label"><g:link controller="userDetail" action="show" id="${topicInstance?.createdBy?.id}">${topicInstance?.createdBy?.encodeAsHTML()}</g:link></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.resource}">
-				<li class="fieldcontain">
-					<span id="resource-label" class="property-label"><g:message code="topic.resource.label" default="Resource" /></span>
-					
-						<g:each in="${topicInstance.resource}" var="r">
-						<span class="property-value" aria-labelledby="resource-label"><g:link controller="resource" action="show" id="${r.id}">${r?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${topicInstance?.subscription}">
-				<li class="fieldcontain">
-					<span id="subscription-label" class="property-label"><g:message code="topic.subscription.label" default="Subscription" /></span>
-					
-						<g:each in="${topicInstance.subscription}" var="s">
-						<span class="property-value" aria-labelledby="subscription-label"><g:link controller="subscription" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
-			</ol>
-			<g:form url="[resource:topicInstance, action:'delete']" method="DELETE">
-				<fieldset class="buttons">
-					<g:link class="edit" action="edit" resource="${topicInstance}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-				</fieldset>
-			</g:form>
-		</div>
-	</body>
+<head>
+	<meta name="layout" content="master">
+	%{--<g:set var="entityName" value="${message(code: 'label', default: 'Dashboard')}" />--}%
+	%{--<title><g:message code="default.list.label" args="[entityName]" /></title>--}%
+</head>
+
+<body>
+<div class="widget-area-3 sidebar">
+	<div class="widget kopa-article-list-widget">
+		<g:render template="subscription"/>
+	</div>
+
+	<div class="widget kopa-article-list-widget">
+		<h3 class="widget-title"><span class="title-line"></span><span class="title-text">Subscription by</span></h3>
+		<g:render template="users"></g:render>
+	</div><!--kopa-article-list-widget-->
+
+</div><!--widget-area-3-->
+
+
+<div id="main-col">
+
+	<div class="widget kopa-article-list-widget">
+		<h3 class="widget-title"><span class="title-line"></span><span class="title-text">Posts</span></h3>
+		<g:render template="post"></g:render>
+	</div><!--kopa-article-list-widget-->
+
+</div><!--main-col-->
+
+
+<div class="clear"></div>
+
+</body>
 </html>

@@ -204,7 +204,7 @@
 
         <h3 class="widget-title"><span class="title-text ">Send Invitation</span></h3>
 
-        <g:form class="clearfix" useToken="true" action="#" method="post">
+        <g:form class="clearfix" useToken="true" controller="invitation"  action="sendInvitation" method="post">
             <g:render template="/layouts/invite"></g:render>
             <p class="contact-button clearfix">
                 <input type="reset" class="form-input form-input-button" value="Cancel">

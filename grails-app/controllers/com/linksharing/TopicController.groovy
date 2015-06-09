@@ -16,7 +16,13 @@ class TopicController {
     }
 
     def show(Topic topicInstance) {
-        respond topicInstance
+        List<Resource> resourceList = Resource.findAllByTopic(topicInstance)
+        List<Subscription> subscriptionList = Subscription.findAllByTopic(topicInstance)
+        List<DocumentResource> documentResourceList = DocumentResource.findAllByTopic(topicInstance)
+        List<LinkShare> linkShareList = LinkShare.findAllByTopic(topicInstance)
+        List<Subscription> subscriptions = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
+        [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance, documentResourceList:documentResourceList,linkShareList:linkShareList,my_subscriptions:subscriptions]
+
     }
 
     def create() {
@@ -101,5 +107,12 @@ class TopicController {
             }
             '*'{ render status: NOT_FOUND }
         }
+    }
+
+    def showTopic(){
+
+        println("inside show topic")
+        println(sid)
+
     }
 }
