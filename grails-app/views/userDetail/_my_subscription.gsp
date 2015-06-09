@@ -1,4 +1,3 @@
-
 <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Subscription</span></h3>
 
 <div class="tab-container-1">
