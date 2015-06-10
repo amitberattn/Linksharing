@@ -1,20 +1,14 @@
 package com.linksharing
 
 class InvitationController {
- def mailService
-    def index() {}
+
+    def invitationService
 
     def sendInvitation(){
-       String email = params.email
-        List<String> emailList =  email.tokenize(',')
-        mailService.sendMail{
-            println(params.email)
-            println(params.topic)
-            to emailList.toArray()
-            subject "Invitation for ${params.topic}"
-            html g.render(template:"mailBody")
+        if(invitationService.sendInvitationEmail(params,g))
             flash.message = "Invitation successfully send!"
-        }
+        else
+            flash.message = "Invitation sending fail!"
         redirect(controller: "userDetail", action: 'dashboard')
     }
 }

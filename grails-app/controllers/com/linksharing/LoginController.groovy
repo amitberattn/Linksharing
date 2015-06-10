@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NOT_FOUND
 
 class LoginController {
+    def loginService
 
     static allowedMethods = [login: 'POST', register: 'POST', logout: 'GET']
 
@@ -35,27 +36,14 @@ class LoginController {
         session.invalidate()
         redirect(url: '/')
     }
-
-    @Transactional
     def register(UserDetailCO userDetailCOInstance) {
-        UserDetail userDetail = new UserDetail(userDetailCOInstance)
         withForm {
-            if (userDetailCOInstance.hasErrors()) {
-                flash.put("error-msg", userDetailCOInstance)
+            if (loginService.registerUser(userDetailCOInstance, flash, session, grailsApplication, params)) {
                 render(view: 'index')
-            } else if (userDetail.save(flush: true)) {
-                String path = grailsApplication.mainContext.servletContext.getRealPath("images/profile")
-                File image = new File("${path}/${userDetail.username}")
-                image.bytes = params.photo.bytes
-                flash.message = "Hallo ${userDetail.username}"
-                session.user = userDetail
-                render(view: '/userDetail/dashboard')
             } else {
-                flash.put("error-msg", userDetail)
-                render(view: 'index')
+                render(view: '/userDetail/dashboard')
             }
         }
-        //redirect(action: 'index')
     }
 
 }

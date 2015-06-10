@@ -15,17 +15,11 @@ class UserDetailController {
         println subscriptionList.topic.asList()
         List<Topic> topicList = Topic.list()
         int postCount = Resource.countByCreatedBy(session.user)
-        topicList.each { it ->
-            println it.createdBy.username
-            println "${it.resource.size()}"
-        }
         [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
     }
 
     @Transactional
     def subscribeTopic(Topic topic) {
-
-        println(topic.id)
         UserDetail userDetail = UserDetail.findById(session.user.id)
         Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail:userDetail)
         if (subscription.validate()) {
@@ -36,6 +30,7 @@ class UserDetailController {
         }
         redirect(action: 'dashboard')
     }
+
     @Transactional
     def unsubscribeTopic(Topic topic){
         UserDetail userDetail =UserDetail.load(session.user.id)
@@ -43,10 +38,6 @@ class UserDetailController {
         userDetail.removeFromSubscription(subscription)
         topic.removeFromSubscription(subscription)
         subscription.delete(flush: true)
-/*        userDetail.removeFromSubscription(subscription)
-        userDetail.subscription*.save(flush: true)
-        userDetail.save(flush: true)*/
-
         flash.message = 'Unsubscribed sucessfully'
         redirect(action: 'dashboard')
     }

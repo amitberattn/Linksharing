@@ -1,9 +1,9 @@
-package linksharing
+package com.linksharing
 
 import grails.transaction.Transactional
 
 @Transactional
-class MailSendService {
+class UserDetailService {
 
     def serviceMethod() {
 
