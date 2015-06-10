@@ -24,6 +24,7 @@ class UserDetailController {
 
     @Transactional
     def subscribeTopic(Topic topic) {
+
         println(topic.id)
         UserDetail userDetail = UserDetail.findById(session.user.id)
         Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail:userDetail)
@@ -33,6 +34,20 @@ class UserDetailController {
         } else {
             flash.message = "Unable to subscribe"
         }
+        redirect(action: 'dashboard')
+    }
+    @Transactional
+    def unsubscribeTopic(Topic topic){
+        UserDetail userDetail =UserDetail.load(session.user.id)
+        Subscription subscription = Subscription.findByUserDetailAndTopic(userDetail,topic)
+        userDetail.removeFromSubscription(subscription)
+        topic.removeFromSubscription(subscription)
+        subscription.delete(flush: true)
+/*        userDetail.removeFromSubscription(subscription)
+        userDetail.subscription*.save(flush: true)
+        userDetail.save(flush: true)*/
+
+        flash.message = 'Unsubscribed sucessfully'
         redirect(action: 'dashboard')
     }
 

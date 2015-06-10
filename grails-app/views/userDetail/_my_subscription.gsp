@@ -9,7 +9,7 @@
                     <g:form controller="subscription" action="update" class="edit-subscription">
                         <article class="entry-item clearfix">
                             <div class="entry-thumb"><a href="#"><img
-                                    src="${resource(dir: 'images/profile', file: "${subscribe.userDetail.username ?: 'user.png'}")}"
+                                    src="${resource(dir: 'images/profile', file: "${subscribe.topic.createdBy.username ?: 'user.png'}")}"
                                     alt=""/></a></div>
 
                             <table>
@@ -26,7 +26,7 @@
                                     <th><input type="reset" value="Cancel" class="form-input-button-blue"/></th>
                                 </tr>
                                 <tr class="entry-content">
-                                    <th colspan="2">@${subscribe.userDetail.username}</th>
+                                    <th colspan="2">@${subscribe.topic.createdBy.username}</th>
                                     <th>Subscriptions</th>
                                     <th>Post</th>
                                 </tr>

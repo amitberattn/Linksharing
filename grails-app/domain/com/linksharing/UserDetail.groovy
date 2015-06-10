@@ -29,9 +29,9 @@ class UserDetail {
 
     static mapping = {
         sort dateCreated: 'desc'
-        topic fetch: 'join'
-        subscription fetch: 'join'
-        resource lazy: false
+//        topic fetch: 'join'
+//        subscription fetch: 'join'
+//        resource lazy: false
     }
     static hasMany = [
             topic         : Topic,

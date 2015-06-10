@@ -26,9 +26,11 @@
                     </tr>
                     <tr class="entry-content">
                         <g:if test="${topic.subscription != null}">
+
                             <g:if test="${session.user.id in topic.subscription.userDetail.id.asList()}">
-                                <td colspan="2"><a
-                                        href="#">${topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</a>
+                                <td colspan="2">
+                                <g:link controller="userDetail" action="unsubscribeTopic"
+                                        id="${topic.id}">${topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
                                 </td>
                             </g:if>
                             <g:else>
