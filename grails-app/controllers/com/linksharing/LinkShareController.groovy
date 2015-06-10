@@ -7,6 +7,7 @@ import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class LinkShareController {
+    def linkShareService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -26,13 +27,7 @@ class LinkShareController {
     @Transactional
     def save(LinkShare linkShareInstance) {
     withForm {
-        if (linkShareInstance.hasErrors()) {
-            flash.put("error-msg", linkShareInstance)
-        } else if (linkShareInstance.save(flush: true)) {
-            flash.message = "Link Resource successfully added!"
-        } else {
-            flash.put("error-msg", linkShareInstance)
-        }
+        linkShareService.saveLink(linkShareInstance,flash,session)
     }
         redirect(controller: "userDetail", action: 'dashboard')
     }

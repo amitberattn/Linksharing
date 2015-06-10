@@ -2,9 +2,13 @@
 
 <div class="tab-container-1">
     <g:if test="${my_subscriptions.size() > 0}">
-        ${my_subscriptions.size() > 5 ? '<a href="#">View All</a>' : ''}
+        <g:if test="${my_subscriptions.size() > 5}">
+            <a href="#">View All</a>
+        </g:if>
         <ul>
+
             <g:each in="${my_subscriptions}" status="i" var="subscribe">
+                <g:if test="${i<5}">
                 <li>
                     <g:form controller="subscription" action="update" class="edit-subscription">
                         <article class="entry-item clearfix">
@@ -31,8 +35,8 @@
                                     <th>Post</th>
                                 </tr>
                                 <tr class="entry-content">
-                                    <td colspan="2"><a
-                                            href="#">${subscribe.topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</a>
+                                    <td colspan="2"><g:link controller="userDetail" action="unsubscribeTopic"
+                                                            id="${subscribe.topic.id}">${subscribe.topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
                                     </td>
                                     <td><a href="href">${subscribe.topic.subscription.size()}</a></td>
                                     <td><a href="href">${subscribe.topic.resource.size()}</a></td>
@@ -53,7 +57,9 @@
                         </article>
                     </g:form>
                 </li>
+                </g:if>
             </g:each>
+
         </ul>
     </g:if>
     <g:else>
