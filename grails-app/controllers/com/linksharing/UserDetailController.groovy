@@ -1,7 +1,6 @@
 package com.linksharing
 
 
-
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
@@ -10,16 +9,36 @@ class UserDetailController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def dashboard(){
+    def dashboard() {
 
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
+        println subscriptionList.topic.asList()
+        List<Topic> topicList = Topic.list()
+        int postCount = Resource.countByCreatedBy(session.user)
+        topicList.each { it ->
+            println it.createdBy.username
+            println "${it.resource.size()}"
+        }
+        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
+    }
 
-        [my_subscriptions:subscriptionList]
+    @Transactional
+    def subscribeTopic(Topic topic) {
+        println(topic.id)
+        UserDetail userDetail = UserDetail.findById(session.user.id)
+        Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail:userDetail)
+        if (subscription.validate()) {
+            subscription.save(flush: true, failOnError: true)
+
+        } else {
+            flash.message = "Unable to subscribe"
+        }
+        redirect(action: 'dashboard')
     }
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond UserDetail.list(params), model:[userDetailInstanceCount: UserDetail.count()]
+        respond UserDetail.list(params), model: [userDetailInstanceCount: UserDetail.count()]
     }
 
     def show(UserDetail userDetailInstance) {
@@ -38,11 +57,11 @@ class UserDetailController {
         }
 
         if (userDetailInstance.hasErrors()) {
-            respond userDetailInstance.errors, view:'create'
+            respond userDetailInstance.errors, view: 'create'
             return
         }
 
-        userDetailInstance.save flush:true
+        userDetailInstance.save flush: true
 
         request.withFormat {
             form multipartForm {
@@ -65,18 +84,18 @@ class UserDetailController {
         }
 
         if (userDetailInstance.hasErrors()) {
-            respond userDetailInstance.errors, view:'edit'
+            respond userDetailInstance.errors, view: 'edit'
             return
         }
 
-        userDetailInstance.save flush:true
+        userDetailInstance.save flush: true
 
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'UserDetail.label', default: 'UserDetail'), userDetailInstance.id])
                 redirect userDetailInstance
             }
-            '*'{ respond userDetailInstance, [status: OK] }
+            '*' { respond userDetailInstance, [status: OK] }
         }
     }
 
@@ -88,14 +107,14 @@ class UserDetailController {
             return
         }
 
-        userDetailInstance.delete flush:true
+        userDetailInstance.delete flush: true
 
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'UserDetail.label', default: 'UserDetail'), userDetailInstance.id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -105,7 +124,7 @@ class UserDetailController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'userDetail.label', default: 'UserDetail'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

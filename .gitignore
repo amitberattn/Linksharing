@@ -20,3 +20,4 @@ tbip.iml
 prodDb*
 grails-app/conf/DataSource.groovy
 web-app/images/profile/
+web-app/images/topic/
