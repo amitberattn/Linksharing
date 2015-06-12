@@ -19,6 +19,8 @@
         <g:message code="linkShare.topic.label" default="Topic" />
         <span>*</span>
     </label>
-    <g:select id="topic"  name="topic.id" from="${Topic.findAllByCreatedBy(UserDetail.load(session.user?.id),[sort:'name'])}" optionKey="id" optionValue="name" required="required"  class="form-input"></g:select>
+    %{--<g:select id="topic"  name="topic.id" from="${Topic.findAllByCreatedBy(UserDetail.load(session.user?.id),[sort:'name'])}" optionKey="id" optionValue="name" required="required"  class="form-input"></g:select>--}%
+    <select name="topic" class="form-input" id="doc-share-modal">
+    </select>
 </p>
 <g:field type="hidden" id="createdBy" name="createdBy.id"  value="${session.user?.id}"/>

@@ -12,7 +12,11 @@ class UserDetailController {
     def dashboard() {
 
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-        println subscriptionList.topic.asList()
+/*        (subscriptionList.topic.resource.flatten() as List<Resource>).get(0).readingItem.find{
+            it.isRead == false && it.userDetail.id == 2
+        }
+        ( (subscriptionList.topic.resource.flatten() as List<Resource>).get(0).readingItem.userDetail as List<UserDetail>).id
+        println subscriptionList.topic.asList()*/
         List<Topic> topicList = Topic.list()
         int postCount = Resource.countByCreatedBy(session.user)
         [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
