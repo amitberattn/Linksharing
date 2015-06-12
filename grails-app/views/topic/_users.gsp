@@ -21,8 +21,8 @@
                         <th>Post</th>
                     </tr>
                     <tr class="entry-content">
-                        <td><a href="href">${1}</a></td>
-                        <td><a href="href">${1}</a></td>
+                        <td><a href="href">${subscribe.userDetail.subscription.size()}</a></td>
+                        <td><a href="href">${subscribe.userDetail.resource.size()}</a></td>
                     </tr>
 
                 </table>

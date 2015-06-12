@@ -18,10 +18,9 @@ class TopicController {
     def show(Topic topicInstance) {
         List<Resource> resourceList = Resource.findAllByTopic(topicInstance)
         List<Subscription> subscriptionList = Subscription.findAllByTopic(topicInstance)
-        List<DocumentResource> documentResourceList = DocumentResource.findAllByTopic(topicInstance)
-        List<LinkShare> linkShareList = LinkShare.findAllByTopic(topicInstance)
         List<Subscription> subscriptions = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-        [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance, documentResourceList:documentResourceList,linkShareList:linkShareList,my_subscriptions:subscriptions]
+        //subscriptionList[0].userDetail.resource.size()
+        [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance,my_subscriptions:subscriptions]
 
     }
 

@@ -19,6 +19,7 @@
         <g:message code="linkShare.topic.label" default="Topic" />
             <span>*</span>
     </label>
-    <g:select id="topic"  name="topic.id" required="required" from="${my_subscriptions.topic.asList()}" optionKey="id" optionValue="name"  class="form-input"></g:select>
+    <select name="topic" class="form-input" id="link-share-modal">
+    </select>
 </p>
 <g:field type="hidden" id="createdBy" name="createdBy.id"  value="${session.user?.id}"/>

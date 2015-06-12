@@ -1,7 +1,25 @@
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".markread").click(function(){
+				var resourceId = $(this).attr('id');
+				$.ajax({
+					url: "${createLink(controller: "readingItem",action: "markAsRead") }",
+					data:{id:resourceId},
+					success: function(data){
+						if(data.isreadItem) {
+							$("#"+resourceId).html("Mark as unread");
+						}
+                        else{
+                            $("#"+resourceId).html("Mark as read");
+                        }
+					}
+				});
+			});
+		});
+	</script>
 	<meta name="layout" content="master">
 	%{--<g:set var="entityName" value="${message(code: 'label', default: 'Dashboard')}" />--}%
 	%{--<title><g:message code="default.list.label" args="[entityName]" /></title>--}%

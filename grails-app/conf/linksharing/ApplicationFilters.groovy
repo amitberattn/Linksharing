@@ -6,7 +6,6 @@ class ApplicationFilters {
 
         beforeLogin(controller: 'login', action: 'index', invert: true) {
             before = {
-                println("beforelogin")
                 if (!session.user) {
                     redirect(url: "/")
                 }
