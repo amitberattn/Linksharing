@@ -1,71 +1,72 @@
-
-<%@ page import="com.linksharing.Subscription" %>
-<!DOCTYPE html>
+<%@ page import="com.linksharing.Resource" contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-		<meta name="layout" content="main">
-		<g:set var="entityName" value="${message(code: 'subscription.label', default: 'Subscription')}" />
-		<title><g:message code="default.show.label" args="[entityName]" /></title>
-	</head>
-	<body>
-		<a href="#show-subscription" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
-		<div id="show-subscription" class="content scaffold-show" role="main">
-			<h1><g:message code="default.show.label" args="[entityName]" /></h1>
-			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
-			</g:if>
-			<ol class="property-list subscription">
-			
-				<g:if test="${subscriptionInstance?.topic}">
-				<li class="fieldcontain">
-					<span id="topic-label" class="property-label"><g:message code="subscription.topic.label" default="Topic" /></span>
-					
-						<span class="property-value" aria-labelledby="topic-label"><g:link controller="topic" action="show" id="${subscriptionInstance?.topic?.id}">${subscriptionInstance?.topic?.encodeAsHTML()}</g:link></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${subscriptionInstance?.userDetail}">
-				<li class="fieldcontain">
-					<span id="userDetail-label" class="property-label"><g:message code="subscription.userDetail.label" default="User Detail" /></span>
-					
-						<span class="property-value" aria-labelledby="userDetail-label"><g:link controller="userDetail" action="show" id="${subscriptionInstance?.userDetail?.id}">${subscriptionInstance?.userDetail?.encodeAsHTML()}</g:link></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${subscriptionInstance?.seriousness}">
-				<li class="fieldcontain">
-					<span id="seriousness-label" class="property-label"><g:message code="subscription.seriousness.label" default="Seriousness" /></span>
-					
-						<span class="property-value" aria-labelledby="seriousness-label"><g:fieldValue bean="${subscriptionInstance}" field="seriousness"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${subscriptionInstance?.dateCreated}">
-				<li class="fieldcontain">
-					<span id="dateCreated-label" class="property-label"><g:message code="subscription.dateCreated.label" default="Date Created" /></span>
-					
-						<span class="property-value" aria-labelledby="dateCreated-label"><g:formatDate date="${subscriptionInstance?.dateCreated}" /></span>
-					
-				</li>
-				</g:if>
-			
-			</ol>
-			<g:form url="[resource:subscriptionInstance, action:'delete']" method="DELETE">
-				<fieldset class="buttons">
-					<g:link class="edit" action="edit" resource="${subscriptionInstance}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-				</fieldset>
-			</g:form>
-		</div>
-	</body>
+<head>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".markread").click(function () {
+                console.log("id="+resourceId)
+                var resourceId = $(this).attr('id');
+                console.log("id="+resourceId)
+                $.ajax({
+                    url: "${createLink(controller: "readingItem",action: "markAsRead") }",
+                    data: {id: resourceId},
+                    success: function (data) {
+                        if (data.isreadItem) {
+                            $("#" + resourceId).html("Mark as unread");
+                        }
+                        else {
+                            $("#" + resourceId).html("Mark as read");
+                        }
+                    }
+                });
+            });
+
+            $(".resourceNo").click(function () {
+                var topicId = $(this).attr('topicid')
+                console.log(topicId)
+                $.ajax({
+                    url: "${createLink(controller: "subscription", action: "postDetails")}",
+                    data:{id: topicId},
+                    success: function (data) {
+                        if (data) {
+                            $('#post').html(data);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <meta name="layout" content="master">
+    %{--<g:set var="entityName" value="${message(code: 'label', default: 'Dashboard')}" />--}%
+    %{--<title><g:message code="default.list.label" args="[entityName]" /></title>--}%
+</head>
+
+<body>
+<div class="widget-area-3 sidebar">
+    <div class="widget kopa-article-list-widget">
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Subscription list</span></h3>
+        <g:each in="${topicList}" status="i" var="topic">
+            <g:render template="/topic/subscription" model="${[topicInstance: topic]}"/>
+        </g:each>
+    </div><!--kopa-article-list-widget-->
+
+</div><!--widget-area-3-->
+
+
+<div id="main-col">
+
+    <div class="widget kopa-article-list-widget">
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Posts</span></h3>
+
+        <div id="post">
+            <g:render template="/topic/post"
+                      model="${[resourceList: topicList[1].resource as java.util.List<com.linksharing.Resource>]}"></g:render>
+        </div></div><!--kopa-article-list-widget-->
+
+</div><!--main-col-->
+
+
+<div class="clear"></div>
+
+</body>
 </html>
