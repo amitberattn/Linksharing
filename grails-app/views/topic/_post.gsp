@@ -16,7 +16,8 @@
                             <a href="#"><asset:image src="placeholders/googleplus.png" alt=""/></a>
 
                             <div class="modify">
-                                <a href="#">View post</a>
+                                %{--<a href="#">View post</a>--}%
+                                <g:link controller="resource" action="show" id="${resourceItem.id}">View post</g:link>
                                 <g:if test="${session.user.id in ((((resourceItem.readingItem as List).findAll {it.isRead==true}).userDetail as List).id as List<Long>)}">
                                     <a style="cursor: pointer" id="${resourceItem.id}" class="markread">Mark as unread</a>
                                 </g:if>

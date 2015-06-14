@@ -1,7 +1,6 @@
 package com.linksharing
 
 
-
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
@@ -12,11 +11,22 @@ class SubscriptionController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond Subscription.list(params), model:[subscriptionInstanceCount: Subscription.count()]
+        respond Subscription.list(params), model: [subscriptionInstanceCount: Subscription.count()]
     }
 
-    def show(Subscription subscriptionInstance) {
-        respond subscriptionInstance
+    def show() {
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        List<Topic> topicList = Subscription.findAllByUserDetail(userDetail).topic as List<Topic>
+        [topicList: topicList]
+    }
+
+    def postDetails(Long id) {
+
+        Topic topic = Topic.load(id)
+        List<Resource> resourceList = Resource.findAllByTopic(topic)
+        println resourceList.size()
+         render(template:  '/topic/post', model: [resourceList: resourceList])
+
     }
 
     def create() {
@@ -31,11 +41,11 @@ class SubscriptionController {
         }
 
         if (subscriptionInstance.hasErrors()) {
-            respond subscriptionInstance.errors, view:'create'
+            respond subscriptionInstance.errors, view: 'create'
             return
         }
 
-        subscriptionInstance.save flush:true
+        subscriptionInstance.save flush: true
 
         request.withFormat {
             form multipartForm {
@@ -53,11 +63,11 @@ class SubscriptionController {
     @Transactional
     def update(Subscription subscriptionInstance) {
 
-        if(subscriptionInstance.hasErrors()){
+        if (subscriptionInstance.hasErrors()) {
             flash.put("error-msg", subscriptionInstance)
-        }else if (subscriptionInstance.save (flush:true)) {
+        } else if (subscriptionInstance.save(flush: true)) {
             flash.message = "successfully updated!"
-        }else {
+        } else {
             flash.put("error-msg", subscriptionInstance)
         }
         redirect(controller: "userDetail", action: 'dashboard')
@@ -71,14 +81,14 @@ class SubscriptionController {
             return
         }
 
-        subscriptionInstance.delete flush:true
+        subscriptionInstance.delete flush: true
 
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'Subscription.label', default: 'Subscription'), subscriptionInstance.id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -88,7 +98,7 @@ class SubscriptionController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'subscription.label', default: 'Subscription'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

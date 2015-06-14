@@ -3,7 +3,8 @@
 <div class="tab-container-1">
     <g:if test="${my_subscriptions.size() > 0}">
         <g:if test="${my_subscriptions.size() > 5}">
-            <a href="#">View All</a>
+            %{--<a href="#">View All</a>--}%
+            <p><g:link style="cursor: pointer" controller="subscription" action="show">View All</g:link></p>
         </g:if>
         <ul>
 

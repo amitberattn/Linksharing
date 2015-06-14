@@ -16,7 +16,8 @@ class ResourceController {
     }
 
     def show(Resource resourceInstance) {
-        respond resourceInstance
+        List<Topic> topicList = Topic.list()
+        [resourceInstance: resourceInstance, topicList:topicList]
     }
 
     def create() {

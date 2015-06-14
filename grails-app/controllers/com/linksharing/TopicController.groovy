@@ -19,7 +19,6 @@ class TopicController {
         List<Resource> resourceList = Resource.findAllByTopic(topicInstance)
         List<Subscription> subscriptionList = Subscription.findAllByTopic(topicInstance)
         List<Subscription> subscriptions = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-        //subscriptionList[0].userDetail.resource.size()
         [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance,my_subscriptions:subscriptions]
 
     }

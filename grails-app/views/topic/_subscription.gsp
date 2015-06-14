@@ -1,4 +1,4 @@
-<div class="tab-container-1">
+<div class="tab-container-1" id="topicItem" topicid="${topicInstance.id}">
     <ul>
         <li>
             <g:form controller="subscription" action="update" class="edit-subscription">
@@ -27,7 +27,7 @@
                                     href="#">${topicInstance.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</a>
                             </td>
                             <td><a href="href">${topicInstance.subscription.size()}</a></td>
-                            <td><a href="href">${topicInstance.resource.size()}</a></td>
+                            <td class="resourceNo" topicid="${topicInstance.id}" style="cursor: pointer">${topicInstance.resource.size()}</td>
                         </tr>
 
                     </table>
