@@ -8,6 +8,7 @@ class ApplicationFilters {
             before = {
                 if (!session.user) {
                     redirect(url: "/")
+                    //return false
                 }
             }
 

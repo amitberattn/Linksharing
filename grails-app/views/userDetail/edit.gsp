@@ -1,41 +1,68 @@
-<%@ page import="com.linksharing.UserDetail" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-		<meta name="layout" content="main">
-		<g:set var="entityName" value="${message(code: 'userDetail.label', default: 'UserDetail')}" />
-		<title><g:message code="default.edit.label" args="[entityName]" /></title>
-	</head>
-	<body>
-		<a href="#edit-userDetail" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
-		<div id="edit-userDetail" class="content scaffold-edit" role="main">
-			<h1><g:message code="default.edit.label" args="[entityName]" /></h1>
-			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
-			</g:if>
-			<g:hasErrors bean="${userDetailInstance}">
-			<ul class="errors" role="alert">
-				<g:eachError bean="${userDetailInstance}" var="error">
-				<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
-				</g:eachError>
-			</ul>
-			</g:hasErrors>
-			<g:form url="[resource:userDetailInstance, action:'update']" method="PUT"  enctype="multipart/form-data">
-				<g:hiddenField name="version" value="${userDetailInstance?.version}" />
-				<fieldset class="form">
-					<g:render template="form"/>
-				</fieldset>
-				<fieldset class="buttons">
-					<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
-				</fieldset>
-			</g:form>
-		</div>
-	</body>
+<head>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".markread").click(function () {
+                var resourceId = $(this).attr('id');
+                $.ajax({
+                    url: "${createLink(controller: "readingItem",action: "markAsRead") }",
+                    data: {id: resourceId},
+                    success: function (data) {
+                        if (data.isreadItem) {
+                            $("#" + resourceId).html("Mark as unread");
+                        }
+                        else {
+                            $("#" + resourceId).html("Mark as read");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <meta name="layout" content="master">
+    <g:set var="entityName" value="${message(code: 'label', default: 'Dashboard')}"/>
+    <title><g:message code="default.list.label" args="[entityName]"/></title>
+</head>
+
+<body>
+<div class="widget-area-3 sidebar">
+    <div class="widget kopa-article-list-widget">
+        <g:render template="userInformation"/>
+    </div>
+
+    <div class="widget kopa-article-list-widget">
+        <g:render template="my_subscription"/>
+    </div><!--kopa-article-list-widget-->
+
+    <div class="widget kopa-article-list-widget">
+    </div><!--kopa-article-list-widget-->
+
+</div><!--widget-area-3-->
+
+<!--row-fluid-->
+
+<div id="main-col">
+
+    <div class="widget kopa-article-list-widget">
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Update Profile</span></h3>
+        <g:uploadForm useToken="true" class="clearfix reg-form" controller="userDetail" action="update"
+                      name="contact-form" method="post">
+            <g:render template="editForm"></g:render>
+        </g:uploadForm>
+
+    </div><!--kopa-article-list-widget-->
+    <div class="widget kopa-article-list-widget">
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Change Password</span></h3>
+        <g:form controller="userDetail" action="changePassword">
+            <g:render template="changePass"></g:render>
+        </g:form>
+
+    </div>
+</div><!--main-col-->
+
+
+<div class="clear"></div>
+
+</body>
 </html>
