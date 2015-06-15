@@ -3,8 +3,7 @@
 <head>
     <script type="text/javascript">
         $(document).ready(function () {
-            $(".markread").click(function () {
-                console.log("id="+resourceId)
+            $(document).on('click','.markread',function () {
                 var resourceId = $(this).attr('id');
                 console.log("id="+resourceId)
                 $.ajax({
@@ -21,7 +20,7 @@
                 });
             });
 
-            $(".resourceNo").click(function () {
+            $(document).on('click','.resourceNo',function () {
                 var topicId = $(this).attr('topicid')
                 console.log(topicId)
                 $.ajax({
@@ -45,9 +44,10 @@
 <div class="widget-area-3 sidebar">
     <div class="widget kopa-article-list-widget">
         <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Subscription list</span></h3>
-        <g:each in="${topicList}" status="i" var="topic">
-            <g:render template="/topic/subscription" model="${[topicInstance: topic]}"/>
-        </g:each>
+        <div id="filteredList">
+            <g:render template="subscriptionList"/>
+        </div>
+
     </div><!--kopa-article-list-widget-->
 
 </div><!--widget-area-3-->
@@ -60,7 +60,7 @@
 
         <div id="post">
             <g:render template="/topic/post"
-                      model="${[resourceList: topicList[1].resource as java.util.List<com.linksharing.Resource>]}"></g:render>
+                      model="${[resourceList: topicInstanceList[1].resource as java.util.List<com.linksharing.Resource>]}"></g:render>
         </div></div><!--kopa-article-list-widget-->
 
 </div><!--main-col-->

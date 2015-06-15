@@ -1,6 +1,6 @@
 package com.linksharing
 
-
+import grails.converters.JSON
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -22,6 +22,23 @@ class ResourceRatingController {
     def create() {
         respond new ResourceRating(params)
     }
+
+    @Transactional
+    def rating(Long id,int rate){
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        Resource resource = Resource.load(id)
+        //ResourceRating resourceRating = new ResourceRating()
+        ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resource)
+        if(!resourceRating){
+            resourceRating=new ResourceRating()
+        }
+        resourceRating.score=rate
+        resourceRating.resource = resource
+        resourceRating.userDetail = userDetail
+        render([flag:true] as JSON)
+
+    }
+
 
     @Transactional
     def save(ResourceRating resourceRatingInstance) {

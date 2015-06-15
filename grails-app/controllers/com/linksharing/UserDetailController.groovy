@@ -1,22 +1,19 @@
 package com.linksharing
 
+import org.springframework.web.multipart.MultipartFile
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class UserDetailController {
+    def userDetailService
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
     def dashboard() {
 
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-/*        (subscriptionList.topic.resource.flatten() as List<Resource>).get(0).readingItem.find{
-            it.isRead == false && it.userDetail.id == 2
-        }
-        ( (subscriptionList.topic.resource.flatten() as List<Resource>).get(0).readingItem.userDetail as List<UserDetail>).id
-        println subscriptionList.topic.asList()*/
         List<Topic> topicList = Topic.list()
         int postCount = Resource.countByCreatedBy(session.user)
         [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
@@ -82,31 +79,25 @@ class UserDetailController {
         }
     }
 
-    def edit(UserDetail userDetailInstance) {
-        respond userDetailInstance
+    def edit() {
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
+        List<Topic> topicList = Topic.list()
+        int postCount = Resource.countByCreatedBy(session.user)
+        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
     }
 
     @Transactional
-    def update(UserDetail userDetailInstance) {
-        if (userDetailInstance == null) {
-            notFound()
-            return
-        }
+    def update(UserDetailUpdateCO userDetailUpdateCO) {
 
-        if (userDetailInstance.hasErrors()) {
-            respond userDetailInstance.errors, view: 'edit'
-            return
-        }
+        userDetailService.updateUser(userDetailUpdateCO,session,flash,params,grailsApplication)
+        redirect(controller: 'userDetail', action: 'dashboard')
+    }
 
-        userDetailInstance.save flush: true
+    @Transactional
+    def changePassword(){
+      userDetailService.changeUserPassword(session,params,flash)
+        redirect(controller: 'userDetail' , action: 'edit')
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'UserDetail.label', default: 'UserDetail'), userDetailInstance.id])
-                redirect userDetailInstance
-            }
-            '*' { respond userDetailInstance, [status: OK] }
-        }
     }
 
     @Transactional
@@ -137,4 +128,24 @@ class UserDetailController {
             '*' { render status: NOT_FOUND }
         }
     }
+}
+
+
+class UserDetailUpdateCO {
+    String email
+    String username
+    String firstName
+    String lastName
+    MultipartFile photo
+    Boolean admin = false
+    Boolean active = true
+
+    static constraints = {
+
+        email(email:true, unique: true, blank: false)
+        username(unique:true, blank: false)
+        firstName()
+        lastName()
+    }
+
 }

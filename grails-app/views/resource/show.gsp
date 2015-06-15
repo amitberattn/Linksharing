@@ -2,6 +2,7 @@
 <html>
 <head>
 	<script type="text/javascript">
+
 		$(document).ready(function () {
 			$(".markread").click(function () {
 				console.log("id="+resourceId)
@@ -17,6 +18,18 @@
 						else {
 							$("#" + resourceId).html("Mark as read");
 						}
+					}
+				});
+			});
+
+			$(".star1").change(function(){
+				var rating = this.value
+				var resourceId =$("#ratingspan").attr('rid')
+				$.ajax({
+					url: "${createLink(controller: "resourceRating",action: "rating")}",
+					data:{id: resourceId,rate: rating},
+					success: function(data) {
+						console.log("rating sucessful");
 					}
 				});
 			});

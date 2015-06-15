@@ -14,6 +14,13 @@ class UserDetail {
         this.active = userDetailCO.active
     }
 
+   UserDetail(UserDetailUpdateCO userDetailUpdateCO){
+       this.email = userDetailUpdateCO.email
+       this.username = userDetailUpdateCO.username
+       this.firstName = userDetailUpdateCO.firstName
+       this.lastName = userDetailUpdateCO.lastName
+   }
+
     String email
     String username
     String password
@@ -46,8 +53,8 @@ class UserDetail {
         lastName()
         email(email: true, unique: true, blank: false)
         username(unique: true)
-        password(password: true)
-        confirmPassword bindable: true
+        password(password: true,nullable: true)
+        confirmPassword bindable: true , nullable: true
         admin()
         active()
         dateCreated(format: 'yyyy-MM-dd')

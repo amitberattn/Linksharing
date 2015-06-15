@@ -100,7 +100,8 @@
                                                 src="${resource(dir: 'images/profile', file: "${session.user?.username ?: 'user.png'}")}"
                                                 alt=""/></a><span></span>
                                         <ul>
-                                            <li><a href="gallery.html">Profile</a></li>
+                                            <li><g:link controller="userDetail" action="edit">Profile</g:link></li>
+                                            %{--<li><a href="gallery.html">Profile</a></li>--}%
                                             <li><a href="video.html">Users</a></li>
                                             <li><a href="elements.html">Topics</a></li>
                                             <li><a href="404.html">Posts</a></li>

@@ -17,7 +17,7 @@
                 <a href="#" style="float: right">${topic.name}</a>
             </p>
 
-            <p class="entry-description">Adrian Peterson exclusive interview Adrian Peterson exclusive interview Adrian Peterson exclusive interview</p>
+            %{--<p class="entry-description">Adrian Peterson exclusive interview Adrian Peterson exclusive interview Adrian Peterson exclusive interview</p>--}%
             <span class="entry-date">
                 <a href="#"><asset:image src="placeholders/facebook-icon.png"/></a>
                 <a href="#"><asset:image src="placeholders/Linkedin.png" alt=""/></a>

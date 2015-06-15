@@ -78,6 +78,9 @@ class UserDetailCO {
 
     static constraints = {
 
+        password nullable: false
+        confirmPassword bindable: true , nullable: false
+
         confirmPassword validator: { value, user, errors ->
             if (!(value?.equals(user?.password))) {
                 errors.rejectValue("confirmPassword", "some.text", "Confirm password must be same as password")
