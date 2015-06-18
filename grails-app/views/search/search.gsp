@@ -27,21 +27,14 @@
 
 <body>
 <div class="widget-area-3 sidebar">
-    <div class="widget kopa-article-list-widget">
-        <g:render template="userInformation"/>
-    </div>
-
-    <div class="widget kopa-article-list-widget">
-        <g:render template="my_subscription"/>
-    </div><!--kopa-article-list-widget-->
 
     <div class="widget kopa-article-list-widget">
         <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Trending Topics</span></h3>
         <div class="tab-container-1">
 
-                <div id="trendingTopicsDiv">
-                <g:render template="trendingTopics"></g:render>
-                </div>
+            <div id="trendingTopicsDiv">
+                <g:render template="/userDetail/trendingTopics"></g:render>
+            </div>
         </div><!--tab-container-1-->
     </div><!--kopa-article-list-widget-->
 
@@ -52,8 +45,9 @@
 <div id="main-col">
 
     <div class="widget kopa-article-list-widget">
-        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Inbox</span></h3>
-       <g:render template="inbox"></g:render>
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Search result</span></h3>
+        <g:render template="/topic/post"
+                  model="${[resourceList: resourceList]}"></g:render>
 
     </div><!--kopa-article-list-widget-->
 

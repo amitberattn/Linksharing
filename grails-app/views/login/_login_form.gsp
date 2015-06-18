@@ -17,3 +17,4 @@
     <g:field type="password" name="password" required="required"  class="form-input"/>
 
 </p>
+<g:link controller="login" action="forgotPassword" style="cursor: pointer">Forgot password?</g:link>

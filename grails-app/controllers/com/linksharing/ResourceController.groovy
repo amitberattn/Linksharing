@@ -16,9 +16,18 @@ class ResourceController {
     }
 
     def show(Resource resourceInstance) {
-        List<Topic> topicList = Topic.list()
-        [resourceInstance: resourceInstance, topicList:topicList]
+        params.max = Math.min(params.max ? params.int('max') : 5,100)
+        List<Topic> topicList = Topic.list(params)
+        int totalTopic = Topic.count()
+        int score = 0
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resourceInstance)
+        if(resourceRating){
+            score = resourceRating.score
+        }
+        [resourceInstance: resourceInstance, topicList:topicList,totalTopic:totalTopic,score:score]
     }
+
 
     def create() {
         respond new Resource(params)

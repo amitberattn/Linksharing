@@ -12,17 +12,34 @@ class UserDetailController {
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
     def dashboard() {
-
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-        List<Topic> topicList = Topic.list()
+        List<Topic> topicList = Topic.findAllByVisibility(Visibility.Public)
+        topicList.sort { a, b ->
+            a.resource.size() == b.resource.size() ? 0 : a.resource.size() > b.resource.size() ? -1 : 1
+        }
+        if(topicList.size()>5){
+            topicList = topicList[0..4]
+        }
+        int totalTopic = Topic.count()
         int postCount = Resource.countByCreatedBy(session.user)
-        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
+        render(view: 'dashboard', model: [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, totalTopic: totalTopic])
+    }
+
+    def trendingTopicsPagination() {
+        println("inside trendingTopicsPagination")
+        params.max = Math.min(params.max ? params.int('max') : 5, 100)
+        List<Topic> topicList = Topic.list(params)
+        int totalTopic = Topic.count()
+        println("TpoicList:" + topicList)
+        println(params.max)
+        println(params.offset)
+        render(template: 'trendingTopics', model: [topicList: topicList, totalTopic: totalTopic])
     }
 
     @Transactional
     def subscribeTopic(Topic topic) {
         UserDetail userDetail = UserDetail.findById(session.user.id)
-        Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail:userDetail)
+        Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail: userDetail)
         if (subscription.validate()) {
             subscription.save(flush: true, failOnError: true)
 
@@ -33,9 +50,9 @@ class UserDetailController {
     }
 
     @Transactional
-    def unsubscribeTopic(Topic topic){
-        UserDetail userDetail =UserDetail.load(session.user.id)
-        Subscription subscription = Subscription.findByUserDetailAndTopic(userDetail,topic)
+    def unsubscribeTopic(Topic topic) {
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        Subscription subscription = Subscription.findByUserDetailAndTopic(userDetail, topic)
         userDetail.removeFromSubscription(subscription)
         topic.removeFromSubscription(subscription)
         subscription.delete(flush: true)
@@ -89,14 +106,14 @@ class UserDetailController {
     @Transactional
     def update(UserDetailUpdateCO userDetailUpdateCO) {
 
-        userDetailService.updateUser(userDetailUpdateCO,session,flash,params,grailsApplication)
+        userDetailService.updateUser(userDetailUpdateCO, session, flash, params, grailsApplication)
         redirect(controller: 'userDetail', action: 'dashboard')
     }
 
     @Transactional
-    def changePassword(){
-      userDetailService.changeUserPassword(session,params,flash)
-        redirect(controller: 'userDetail' , action: 'edit')
+    def changePassword() {
+        userDetailService.changeUserPassword(session, params, flash)
+        redirect(controller: 'userDetail', action: 'edit')
 
     }
 
@@ -142,8 +159,8 @@ class UserDetailUpdateCO {
 
     static constraints = {
 
-        email(email:true, unique: true, blank: false)
-        username(unique:true, blank: false)
+        email(email: true, unique: true, blank: false)
+        username(unique: true, blank: false)
         firstName()
         lastName()
     }

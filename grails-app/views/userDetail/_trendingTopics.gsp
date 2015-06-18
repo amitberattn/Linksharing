@@ -1,3 +1,4 @@
+<ul>
 <g:each in="${topicList}" status="i" var="topic">
     <li>
         <g:form controller="subscription" action="update" class="edit-subscription">
@@ -64,3 +65,9 @@
         </g:form>
     </li>
 </g:each>
+</ul>
+
+%{--
+<div class="paginateButtons">
+    <util:remotePaginate total="${totalTopic}" update="trendingTopicsDiv" controller="userDetail" action="trendingTopicsPagination" pageSizes="[5: '5 on Page',10:'10 on Page',15:'15 on Page']" prev="${"<<"}" next="${">>"}"/>
+</div>--}%

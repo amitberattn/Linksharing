@@ -8,13 +8,9 @@
 
                 <div class="entry-content">
                     <p class="entry-description">${resourceItem.description}</p>
-                    <p class="entry-description"><span class="star-rating" id="ratingspan" rid="${resourceItem.id}">
-                        <input type="radio" name="rating" value="1" class="star1"><i></i>
-                        <input type="radio" name="rating" value="2" class="star1"><i></i>
-                        <input type="radio" name="rating" value="3" class="star1"><i></i>
-                        <input type="radio" name="rating" value="4" class="star1"><i></i>
-                        <input type="radio" name="rating" value="5" class="star1"><i></i>
-                    </span></p>
+                    <p class="entry-description">
+                    <div id="star" rid="${resourceItem.id}"></div>
+                    </p>
                     <span class="entry-date">
                         <a href="#"><asset:image src="placeholders/facebook-icon.png" alt=""/></a>
                         <a href="#"><asset:image src="placeholders/Linkedin.png" alt=""/></a>
