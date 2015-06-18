@@ -15,37 +15,26 @@ class SubscriptionController {
     }
 
     def show() {
-/*        UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Topic> topicList = Subscription.findAllByUserDetail(userDetail).topic as List<Topic>
-        [topicList: topicList]*/
         params.max = Math.min(params.max ? params.int('max') : 5, 100)
         UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Topic> topicInstanceList = Subscription.findAllByUserDetail(userDetail,params).topic as List<Topic>
+        List<Topic> topicInstanceList = Subscription.findAllByUserDetail(userDetail, params).topic as List<Topic>
         int topicInstanceTotal = Subscription.countByUserDetail(userDetail)
-        render(view: 'show',model: [topicInstanceList:topicInstanceList, topicInstanceTotal:topicInstanceTotal])
-    }
-    def remotePagination() {
-/*        UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Topic> topicList = Subscription.findAllByUserDetail(userDetail).topic as List<Topic>
-        [topicList: topicList]*/
-        params.max = Math.min(params.max ? params.int('max') : 5, 100)
-        UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Topic> topicInstanceList = Subscription.findAllByUserDetail(userDetail,params).topic as List<Topic>
-        int topicInstanceTotal = Subscription.countByUserDetail(userDetail)
-        render(template: 'subscriptionList',model: [topicInstanceList:topicInstanceList, topicInstanceTotal:topicInstanceTotal])
+        render(view: 'show', model: [topicInstanceList: topicInstanceList, topicInstanceTotal: topicInstanceTotal])
     }
 
-    def filter = {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        render(template: 'filter', model: [bookInstanceList: Book.list(params), bookInstanceTotal: Book.count()])
+    def remotePagination() {
+        params.max = Math.min(params.max ? params.int('max') : 5, 100)
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        List<Topic> topicInstanceList = Subscription.findAllByUserDetail(userDetail, params).topic as List<Topic>
+        int topicInstanceTotal = Subscription.countByUserDetail(userDetail)
+        render(template: 'subscriptionList', model: [topicInstanceList: topicInstanceList, topicInstanceTotal: topicInstanceTotal])
     }
 
     def postDetails(Long id) {
-
         Topic topic = Topic.load(id)
         List<Resource> resourceList = Resource.findAllByTopic(topic)
         println resourceList.size()
-         render(template:  '/topic/post', model: [resourceList: resourceList])
+        render(template: '/topic/post', model: [resourceList: resourceList])
 
     }
 

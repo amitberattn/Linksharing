@@ -32,6 +32,7 @@ class UserDetail {
     Boolean active = true
     Date dateCreated
     Date lastUpdated
+    String forgotPassId
     static transients = ['confirmPassword', 'photo']
 
     static mapping = {
@@ -59,6 +60,7 @@ class UserDetail {
         active()
         dateCreated(format: 'yyyy-MM-dd')
         lastUpdated(format: 'yyyy-MM-dd')
+        forgotPassId(nullable: true)
     }
 
 }

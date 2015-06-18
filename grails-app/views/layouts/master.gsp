@@ -25,6 +25,18 @@
 
     <asset:javascript src="js/jquery-1.8.3.min.js"/>
     <asset:javascript src="js/modernizr.custom.js"/>
+    <script>
+/*        $(document).ready(function(){
+
+            $('#search').keydown(function(e){
+                var keyCode = e.which
+                if(keyCode == 13){
+                    console.log("Enter pressed")
+                    console.log(this.value)
+                }
+            })
+        });*/
+    </script>
 
     <g:layoutHead/>
 
@@ -49,12 +61,12 @@
 
                         <div class="sb-search-wrapper">
                             <div id="sb-search" class="sb-search">
-                                <form>
+                                <g:form controller="search" action="search">
                                     <input class="sb-search-input" placeholder="Enter your search term..." type="text"
                                            value="" name="search" id="search">
                                     <input class="sb-search-submit" type="submit" value="">
-                                    <span class="sb-icon-search"></span>
-                                </form>
+                                    <span class="sb-icon-search"></span>-
+                                </g:form>
                             </div><!--sb-search-->
                         </div><!--sb-search-wrapper-->
 

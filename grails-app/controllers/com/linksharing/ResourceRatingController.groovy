@@ -23,18 +23,34 @@ class ResourceRatingController {
         respond new ResourceRating(params)
     }
 
+   def hasRating(Long id){
+       int score = 0
+       UserDetail userDetail = UserDetail.load(session.user.id)
+       Resource resource = Resource.load(id)
+       ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resource)
+       if(resourceRating){
+          score = resourceRating.score
+       }
+       render([score:score] as JSON)
+   }
+
     @Transactional
     def rating(Long id,int rate){
+        println("Score"+rate)
+        println("Rid"+id)
+
         UserDetail userDetail = UserDetail.load(session.user.id)
         Resource resource = Resource.load(id)
-        //ResourceRating resourceRating = new ResourceRating()
-        ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resource)
+        ResourceRating resourceRating = new ResourceRating()
+/*        ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resource)
         if(!resourceRating){
             resourceRating=new ResourceRating()
-        }
+        }*/
         resourceRating.score=rate
         resourceRating.resource = resource
         resourceRating.userDetail = userDetail
+        resourceRating.save(flush: true)
+
         render([flag:true] as JSON)
 
     }
