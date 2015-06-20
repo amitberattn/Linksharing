@@ -60,7 +60,7 @@
 
         <div id="post">
             <g:render template="/topic/post"
-                      model="${[resourceList: topicInstanceList[1].resource as java.util.List<com.linksharing.Resource>]}"></g:render>
+                      model="${[resourceList: topicInstanceList[0] ?.resource as java.util.List<com.linksharing.Resource>]}"></g:render>
         </div></div><!--kopa-article-list-widget-->
 
 </div><!--main-col-->

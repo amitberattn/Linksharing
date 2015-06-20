@@ -4,9 +4,9 @@
         <li>
             <g:form controller="subscription" action="update" class="edit-subscription">
                 <article class="entry-item clearfix">
-                    <div class="entry-thumb"><a href="#"><img
+                    <div class="entry-thumb"><g:link controller="userDetail" action="profile" id="${topicInstance.createdBy.id}"><img
                             src="${resource(dir: 'images/profile', file: "${topicInstance.createdBy.username ?: 'user.png'}")}"
-                            alt=""/></a></div>
+                            alt=""/></g:link></div>
                     <table>
                         <tr class="entry-content show-text">
                             <th colspan="4" style="text-align: left;"><g:link controller="topic" action="show"

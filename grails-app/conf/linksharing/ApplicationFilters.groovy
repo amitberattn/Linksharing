@@ -6,7 +6,7 @@ class ApplicationFilters {
 
         beforeLogin(controller: 'login', action: 'index', invert: true) {
             before = {
-                if (!session.user && !(actionName.equals("forgotPassword") || actionName.equals("forgotPasswordEmailSet") || actionName.equals("forgotPasswordReset") || actionName.equals("resetPasswordPage") || actionName.equals("login"))) {
+                if (!session.user && !(actionName.equals("forgotPassword") || actionName.equals("forgotPasswordEmailSet") || actionName.equals("forgotPasswordReset") || actionName.equals("resetPasswordPage") || actionName.equals("login") || actionName.equals("show") ||actionName.equals("profile") )) {
                     println("con : "+controllerName)
                     println("act : "+actionName)
                     redirect(url: "/")

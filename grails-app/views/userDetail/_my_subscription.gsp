@@ -13,9 +13,9 @@
                 <li>
                     <g:form controller="subscription" action="update" class="edit-subscription">
                         <article class="entry-item clearfix">
-                            <div class="entry-thumb"><a href="#"><img
+                            <div class="entry-thumb"><g:link controller="userDetail" action="profile" id="${subscribe.topic.createdBy.id}"><img
                                     src="${resource(dir: 'images/profile', file: "${subscribe.topic.createdBy.username ?: 'user.png'}")}"
-                                    alt=""/></a></div>
+                                    alt=""/></g:link></div>
 
                             <table>
                                 <tr class="entry-content show-text">
@@ -53,7 +53,7 @@
                                 <a href="#" class="invite"><asset:image src="placeholders/email-icon.png"
                                                                         class="modal-form" alt=""/></a>
                                 <a href="#" class="edit-topic"><asset:image src="placeholders/editor.png" alt=""/></a>
-                                <a href="#"><asset:image src="placeholders/trash.png" alt=""/></a>
+                                <g:link controller="topic" action="delete"  id="${subscribe.topic.id}" style="cursor: pointer" methods="DELETE"><asset:image src="placeholders/trash.png" alt=""/></g:link>
                             </div>
                         </article>
                     </g:form>

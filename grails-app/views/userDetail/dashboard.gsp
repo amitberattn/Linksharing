@@ -2,18 +2,18 @@
 <html>
 <head>
     <script type="text/javascript">
-        $(document).ready(function(){
-            $(".markread").click(function(){
+        $(document).ready(function () {
+            $(".markread").click(function () {
                 var resourceId = $(this).attr('id');
                 $.ajax({
                     url: "${createLink(controller: "readingItem",action: "markAsRead") }",
-                    data:{id:resourceId},
-                    success: function(data){
-                        if(data.isreadItem) {
-                            $("#"+resourceId).html("Mark as unread");
+                    data: {id: resourceId},
+                    success: function (data) {
+                        if (data.isreadItem) {
+                            $("#" + resourceId).html("Mark as unread");
                         }
-                        else{
-                            $("#"+resourceId).html("Mark as read");
+                        else {
+                            $("#" + resourceId).html("Mark as read");
                         }
                     }
                 });
@@ -27,40 +27,72 @@
 
 <body>
 <div class="widget-area-3 sidebar">
+
     <div class="widget kopa-article-list-widget">
         <g:render template="userInformation"/>
     </div>
+    <g:if test="${session.user.admin == false}">
+        <div class="widget kopa-article-list-widget">
+            <g:render template="my_subscription"/>
+        </div><!--kopa-article-list-widget-->
 
-    <div class="widget kopa-article-list-widget">
-        <g:render template="my_subscription"/>
-    </div><!--kopa-article-list-widget-->
+        <div class="widget kopa-article-list-widget">
+            <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Trending Topics</span>
+            </h3>
 
-    <div class="widget kopa-article-list-widget">
-        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Trending Topics</span></h3>
-        <div class="tab-container-1">
-
+            <div class="tab-container-1">
                 <div id="trendingTopicsDiv">
-                <g:render template="trendingTopics"></g:render>
+                    <g:render template="trendingTopics"></g:render>
                 </div>
-        </div><!--tab-container-1-->
-    </div><!--kopa-article-list-widget-->
+            </div><!--tab-container-1-->
+        </div><!--kopa-article-list-widget-->
+    </g:if>
+    <g:else>
+%{--             <div class="widget kopa-article-list-widget">
+              <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Topics</span></h3>
+              <div class="tab-container-1">
+                <div id="adminTopics">
+                     <g:render template="topicsAdmin"></g:render>
+                 </div>
+              </div>--}%
+        <div class="widget kopa-article-list-widget">
+            <g:render template="my_subscription"/>
+        </div><!--kopa-article-list-widget-->
 
+        <div class="widget kopa-article-list-widget">
+            <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Topics</span>
+            </h3>
+
+            <div class="tab-container-1">
+                <div id="adminTopics">
+                    <g:render template="topicsAdmin"></g:render>
+                </div>
+            </div><!--tab-container-1-->
+        </div>
+
+    </g:else>
 </div><!--widget-area-3-->
 
 <!--row-fluid-->
 
-<div id="main-col">
+    <div id="main-col">
 
-    <div class="widget kopa-article-list-widget">
-        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Inbox</span></h3>
-       <g:render template="inbox"></g:render>
+        <div class="widget kopa-article-list-widget">
+            <g:if test="${session.user.admin == false}">
+                <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Inbox</span></h3>
+                <g:render template="inbox"></g:render>
+            </g:if>
+            <g:else>
+                <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Post</span></h3>
+                <g:render template="/topic/post"></g:render>
+            </g:else>
 
-    </div><!--kopa-article-list-widget-->
+        </div><!--kopa-article-list-widget-->
 
-</div><!--main-col-->
+    </div><!--main-col-->
 
 
-<div class="clear"></div>
+    <div class="clear"></div>
 
 </body>
 </html>
