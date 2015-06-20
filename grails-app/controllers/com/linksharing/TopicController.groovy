@@ -8,7 +8,7 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class TopicController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT"]
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -18,8 +18,8 @@ class TopicController {
     def show(Topic topicInstance) {
         List<Resource> resourceList = Resource.findAllByTopic(topicInstance)
         List<Subscription> subscriptionList = Subscription.findAllByTopic(topicInstance)
-        List<Subscription> subscriptions = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
-        [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance,my_subscriptions:subscriptions]
+        //List<Subscription> subscriptions = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
+        [resourceList : resourceList, subscriptionList:subscriptionList, topicInstance :topicInstance]
 
     }
 
@@ -86,15 +86,10 @@ class TopicController {
             return
         }
 
-        topicInstance.delete flush:true
+        topicInstance.delete(flush: true)
+        flash.message = "Deleted successfully"
+        redirect(controller: "userDetail",action: "dashboard")
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Topic.label', default: 'Topic'), topicInstance.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
     }
 
     protected void notFound() {

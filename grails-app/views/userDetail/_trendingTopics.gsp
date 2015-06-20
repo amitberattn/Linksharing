@@ -1,11 +1,12 @@
 <ul>
-<g:each in="${topicList}" status="i" var="topic">
+<g:if test="${topicList.size() >0}">
+    <g:each in="${topicList}" status="i" var="topic">
     <li>
         <g:form controller="subscription" action="update" class="edit-subscription">
             <article class="entry-item clearfix">
-                <div class="entry-thumb"><a href="#"><img
+                <div class="entry-thumb"><g:link controller="userDetail" action="profile" id="${topic.createdBy.id}"><img
                         src="${resource(dir: 'images/profile', file: "${topic.createdBy.username ?: 'user.png'}")}"
-                        alt=""/></a></div>
+                        alt=""/></g:link></div>
 
                 <table>
                     <tr class="entry-content show-text">
@@ -28,7 +29,7 @@
                     <tr class="entry-content">
                         <g:if test="${topic.subscription != null}">
 
-                            <g:if test="${session.user.id in topic.subscription.userDetail.id.asList()}">
+                            <g:if test="${session.user?.id in topic.subscription.userDetail.id.asList()}">
                                 <td colspan="2">
                                 <g:link controller="userDetail" action="unsubscribeTopic"
                                         id="${topic.id}">${topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
@@ -49,14 +50,14 @@
                 </table>
                 <g:select name="topic.seriousness" from="${com.linksharing.Seriousness}"
                           value="${com.linksharing.Seriousness.Serious}" required="required"></g:select>
-                <g:if test="${topic.createdBy.id == session.user.id}">
+                <g:if test="${topic.createdBy.id == session.user?.id}">
                     <g:select name="topic.visibility" from="${com.linksharing.Visibility}"
                               value="${topic.visibility}" required="required"></g:select>
                 </g:if>
                 <div class="edit">
                     <a href="#" class="invite"><asset:image src="placeholders/email-icon.png"
                                                             class="modal-form" alt=""/></a>
-                    <g:if test="${topic.createdBy.id == session.user.id}">
+                    <g:if test="${topic.createdBy.id == session.user?.id}">
                         <a href="#" class="edit-topic"><asset:image src="placeholders/editor.png" alt=""/></a>
                         <a href="#"><asset:image src="placeholders/trash.png" alt=""/></a>
                     </g:if>
@@ -65,6 +66,7 @@
         </g:form>
     </li>
 </g:each>
+</g:if>
 </ul>
 
 %{--

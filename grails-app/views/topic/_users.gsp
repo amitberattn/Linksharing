@@ -1,3 +1,4 @@
+<g:if test="${subscriptionList.size()>0}">
 <g:each in="${subscriptionList}" status="i" var="subscribe">
 <div class="tab-container-1">
     <ul>
@@ -14,7 +15,7 @@
                         <th colspan="4" style="text-align: left;"><a href="#">@${subscribe.userDetail.username}</a></th>
                     </tr>
                     <tr class="entry-content edit-text" style="display: none;">
-                        <g:field type="hidden" name="id" value="${session.user.id}"/>
+                        %{--<g:field type="hidden" name="id" value="${session.user.id}"/>--}%
                     </tr>
                     <tr class="entry-content">
                         <th>Subscriptions</th>
@@ -31,3 +32,4 @@
     </ul>
 </div><!--tab-container-1-->
     </g:each>
+</g:if>

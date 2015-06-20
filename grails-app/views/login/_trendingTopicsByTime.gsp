@@ -2,9 +2,9 @@
     <g:each in="${todyTopicList}" var="topic">
     <li>
         <article class="entry-item clearfix">
-            <div class="entry-thumb"><a href="#"><a href="#"><img
+            <div class="entry-thumb"><g:link controller="userDetail" action="profile" id="${topic.createdBy.id}" style="cursor: pointer"><img
                     src="${resource(dir: 'images/profile', file: "${topic.createdBy.username ?: 'user.png'}")}"
-                    alt=""/></a>
+                    alt=""/></g:link>
             </div>
 
             <p class="entry-description">
@@ -12,9 +12,10 @@
                 &nbsp;&nbsp;
                 <i>${topic.createdBy.username}</i>
                 &nbsp;&nbsp;
-                <span class="entry-date">${topic.createdBy.dateCreated}</span>
+                %{--<span class="entry-date">${topic.dateCreated}</span>--}%
+                <span class="entry-date"><g:formatDate format="dd-MMM-yyyy HH:mm" date="${topic.dateCreated}"/></span>
                 &nbsp;&nbsp;
-                <a href="#" style="float: right">${topic.name}</a>
+                <g:link controller="topic" action="show" id="${topic.id}" style="float: right"> ${topic.name}</g:link>
             </p>
 
             %{--<p class="entry-description">Adrian Peterson exclusive interview Adrian Peterson exclusive interview Adrian Peterson exclusive interview</p>--}%
@@ -24,7 +25,6 @@
                 <a href="#"><asset:image src="placeholders/googleplus.png" alt=""/></a>
 
                 <div class="modify">
-                    <a href="#">View post</a>
                 </div>
             </span>
         </article>

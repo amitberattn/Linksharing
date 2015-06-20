@@ -32,7 +32,7 @@ class UserDetail {
     Boolean active = true
     Date dateCreated
     Date lastUpdated
-    String forgotPassId
+    String forgotPassId ="default"
     static transients = ['confirmPassword', 'photo']
 
     static mapping = {

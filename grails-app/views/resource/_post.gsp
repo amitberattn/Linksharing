@@ -32,7 +32,8 @@
                                 <a href="${resourceItem.url}">View full site</a>
                             </g:if>
                             <g:else>
-                                <a href="/linksharing/images/topic/${resourceItem.fileName}">Download</a>
+                                %{--<a href="/linksharing/images/topic/${resourceItem.fileName}">Download</a>--}%
+                                <g:link style="cursor: pointer" controller="documentResource" action="download" id="${resourceItem.id}">Download</g:link>
                             </g:else>
                         </div>
                     </span>

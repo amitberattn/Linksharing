@@ -19,9 +19,10 @@
     <asset:stylesheet src="css/bootstrap-responsive.css"/>
     <asset:stylesheet src="css/responsive.css"/>
     <asset:stylesheet src="css/coban.css"/>
+    <asset:stylesheet src="css/jquery.dataTables.css"/>
 
-    <link href='http://fonts.googleapis.com/css?family=Rokkitt' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    %{--<link href='http://fonts.googleapis.com/css?family=Rokkitt' rel='stylesheet' type='text/css'>--}%
+    %{--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>--}%
 
     <asset:javascript src="js/jquery-1.8.3.min.js"/>
     <asset:javascript src="js/modernizr.custom.js"/>
@@ -114,7 +115,9 @@
                                         <ul>
                                             <li><g:link controller="userDetail" action="edit">Profile</g:link></li>
                                             %{--<li><a href="gallery.html">Profile</a></li>--}%
-                                            <li><a href="video.html">Users</a></li>
+                                            <g:if test="${session.user.admin == true}">
+                                            <li><g:link controller="userDetail" action="listUser">Users</g:link></li>
+                                            </g:if>
                                             <li><a href="elements.html">Topics</a></li>
                                             <li><a href="404.html">Posts</a></li>
                                             <li><g:link controller="login" action="logout">Logout</g:link></li>
