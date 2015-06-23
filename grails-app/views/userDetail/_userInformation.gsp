@@ -21,7 +21,7 @@
                         </tr>
                         <tr class="entry-content">
                             <td><g:link controller="subscription" action="show">${my_subscriptions.size()}</g:link></td>
-                            <td><a href="href">${postNo}</a></td>
+                            <td>   <g:link controller="userDetail" action="postUser" id="${userDetail.id}">${postNo}</g:link></td>
                         </tr>
 
                     </table>

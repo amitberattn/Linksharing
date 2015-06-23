@@ -14,53 +14,30 @@
                 isRated = true
             }
 
-
             $('.star').raty({
                 score: "${score}",
                 readOnly: isRated,
                 click: function (score, evt) {
-                    var resourceId = $(".star").attr('rid')
+                    var resourceId = $(this).attr('rid')
                     var rating = score
                     console.log("rid=" + resourceId)
+                    console.log("score=" + score)
 
                     $.ajax({
                         url: "${createLink(controller: "resourceRating",action: "rating")}",
                         data: {id: resourceId, rate: score},
                         success: function (data) {
                             if (data.flag){
-                                console.log("sucess")
                                 $(this).raty({
                                     score: "${score}",
                                     readOnly:true
                                 });
 
-                                console.log("rating successful");
+                                console.log("rating sucessful");
                             }
                         }
                     });
                 }
-            });
-
-
-            $('#edit').click(function(){
-                $('#editDiv').css('display','block');
-            });
-
-            $('#editButton').click(function(){
-
-                var desc = $('#resDesc').val()
-                var id = $('#resDesc').attr('rid')
-                console.log("rid="+id);
-                $.ajax({
-                    url: "${createLink(controller: "resource",action: "updateDesc")}",
-                    data: {id: id, desc: desc},
-                    success: function (data) {
-                        if(data){
-                            $('#editDiv').css('display','none');
-                            $('#desc').html(desc);
-                        }
-                    }
-                });
             });
 
 
@@ -108,7 +85,9 @@
 <div class="widget-area-3 sidebar">
     <div class="widget kopa-article-list-widget">
         <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Post</span></h3>
-        <g:render template="post" model="${[resourceItem: resourceInstance]}"/>
+        <g:each in="${resourceList}" var="resourceInstance">
+        <g:render template="/resource/post" model="${[resourceItem: resourceInstance]}"/>
+        </g:each>
     </div><!--kopa-article-list-widget-->
 
 </div><!--widget-area-3-->
@@ -116,7 +95,7 @@
 <div id="main-col">
 
     <div class="widget kopa-article-list-widget">
-        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Treanding topics</span></h3>
+        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Topics</span></h3>
 
         <div id="trendingTopicsDiv">
             <g:render template="trendingTopics"></g:render>
@@ -124,8 +103,6 @@
     </div><!--kopa-article-list-widget-->
 
 </div><!--main-col-->
-
-
 <div class="clear"></div>
 
 </body>

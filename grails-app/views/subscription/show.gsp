@@ -3,6 +3,31 @@
 <head>
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $('#postSearchInput').keypress(function (e) {
+                var key = e.which;
+                if(key == 13)  // the enter key code
+                {
+                    console.log("enter press");
+                    console.log($(this).val());
+                    var searchText = $(this).val();
+                    var resId = $('#postSelect').attr('rid');
+                    console.log("resId="+resId);
+
+                    $.ajax({
+                        url: "${createLink(controller: "subscription",action: "postSearch") }",
+                        data: {txt:searchText,resId:resId},
+                        success: function(resp){
+                            $('#searchDiv').empty();
+                            $('#searchDiv').html(resp);
+                        }
+                    });
+
+
+                }
+            });
+
+
             $(document).on('click','.markread',function () {
                 var resourceId = $(this).attr('id');
                 console.log("id="+resourceId)
@@ -28,7 +53,7 @@
                     data:{id: topicId},
                     success: function (data) {
                         if (data) {
-                            $('#post').html(data);
+                            $('#searchDiv').html(data);
                         }
                     }
                 });
@@ -56,11 +81,13 @@
 <div id="main-col">
 
     <div class="widget kopa-article-list-widget">
-        <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Posts</span></h3>
+        <h3 class="widget-title"><span class="title-text">Posts</span><span><g:textField name="inboxSearch" value="" placeholder="Search in post" style="float: right;margin-right: 10px" id="postSearchInput"></g:textField></span></h3>
 
         <div id="post">
+            <div id="searchDiv">
             <g:render template="/topic/post"
                       model="${[resourceList: topicInstanceList[0] ?.resource as java.util.List<com.linksharing.Resource>]}"></g:render>
+            </div>
         </div></div><!--kopa-article-list-widget-->
 
 </div><!--main-col-->

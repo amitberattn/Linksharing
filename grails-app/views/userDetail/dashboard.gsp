@@ -3,6 +3,61 @@
 <head>
     <script type="text/javascript">
         $(document).ready(function () {
+
+
+           $('#inboxSearchInput').keypress(function (e) {
+                var key = e.which;
+                if(key == 13)  // the enter key code
+                {
+                    console.log("enter press");
+                    console.log($(this).val())
+                    var searchText = $(this).val()
+
+                    $.ajax({
+                        url: "${createLink(controller: "userDetail",action: "searchInbox") }",
+                        data: {txt:searchText},
+                        success: function(resp){
+                            $('#searchDiv').empty();
+                            $('#searchDiv').html(resp);
+                        }
+                    });
+
+
+                }
+            });
+
+
+
+//            chaange seriosness by ajax
+
+            $('.seriousness').change(function(){
+                var ser = $(this).val();
+                var id = $(this).attr('id');
+                $.ajax({
+                    url: "${createLink(controller: "userDetail",action: "updateSeriousness") }",
+                    data: {s:ser,id:id},
+                    success: function(resp){
+                        $("#"+id).val(ser)
+                    }
+                });
+            });
+
+// change privacy by ajax
+
+            $('.visibility').change(function(){
+                var visibility = $(this).val();
+                var id = $(this).attr('id');
+                $.ajax({
+                    url: "${createLink(controller: "userDetail",action: "updateVisibility") }",
+                    data: {visibility:visibility,id:id},
+                    success: function(resp){
+                        $("#"+id).val(visibility)
+                    }
+                });
+            });
+
+
+
             $(".markread").click(function () {
                 var resourceId = $(this).attr('id');
                 $.ajax({
@@ -79,8 +134,11 @@
 
         <div class="widget kopa-article-list-widget">
             <g:if test="${session.user.admin == false}">
-                <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Inbox</span></h3>
+                <h3 class="widget-title"><span class="title-text">Inbox</span>
+                <span><g:textField name="inboxSearch" value="" placeholder="Search in inbox" style="float: right" id="inboxSearchInput"></g:textField></span></h3>
+                <div id="searchDiv">
                 <g:render template="inbox"></g:render>
+                </div>
             </g:if>
             <g:else>
                 <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Post</span></h3>
