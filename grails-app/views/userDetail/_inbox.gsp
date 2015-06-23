@@ -23,8 +23,8 @@
                                         <a href="#"><asset:image src="placeholders/googleplus.png" alt=""/></a>
 
                                         <div class="modify">
-                                            <g:link controller="topic" action="show"
-                                                    id="${resourceItem.topic.id}" style="cursor: pointer">View post</g:link>
+                                            <g:link controller="resource" action="show"
+                                                    id="${resourceItem.id}">View post</g:link>
                                             <g:if test="${session.user?.id in ((((resourceItem.readingItem as List).findAll {
                                                 it.isRead == true
                                             }).userDetail as List).id as List<Long>)}">
@@ -39,7 +39,8 @@
                                                 <a href="${resourceItem.url}" target="_blank">View full site</a>
                                             </g:if>
                                             <g:else>
-                                                <a href="/linksharing/images/topic/${resourceItem.fileName}">Download</a>
+                                                %{--<a href="/linksharing/images/topic/${resourceItem.fileName}">Download</a>--}%
+                                                <g:link style="cursor: pointer" controller="documentResource" action="download" id="${resourceItem.id}">Download</g:link>
                                             </g:else>
                                         </div>
                                     </span>
@@ -63,7 +64,8 @@
                                     <a href="#"><asset:image src="placeholders/googleplus.png" alt=""/></a>
 
                                     <div class="modify">
-                                        <a href="#">View post</a>
+                                        <g:link controller="resource" action="show"
+                                                id="${resourceItem.id}">View post</g:link>
                                         <a style="cursor: pointer" id="${resourceItem.id}"
                                            class="markread">Mark as read</a>
                                         <g:if test="${resourceItem instanceof com.linksharing.LinkShare}">

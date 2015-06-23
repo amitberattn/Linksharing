@@ -49,7 +49,7 @@
 
     <div class="widget kopa-article-list-widget">
         <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Posts</span></h3>
-        <g:render template="inbox"></g:render>
+        <g:render template="/topic/post"></g:render>
 
     </div><!--kopa-article-list-widget-->
 

@@ -10,6 +10,22 @@ class ResourceController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+    @Transactional
+    def updateDesc(Long id,String desc){
+        println("rid="+id)
+        println("desc="+desc)
+        Resource resource = Resource.get(id)
+        resource.description = desc
+        resource.save(flush: true)
+        render(true)
+    }
+    @Transactional
+    def deleteResource(Resource resource){
+        resource.delete(flush: true)
+        flash.message = "Post deleted"
+        redirect(controller: 'subscription',action: 'show')
+    }
+
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond Resource.list(params), model:[resourceInstanceCount: Resource.count()]

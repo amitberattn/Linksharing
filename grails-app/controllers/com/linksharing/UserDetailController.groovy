@@ -12,6 +12,19 @@ class UserDetailController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
+
+    def searchInbox(String txt){
+        println("text= "+txt)
+        UserDetail userDetail = UserDetail.load(session.user.id)
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
+        List<Topic> myTopicList = subscriptionList.topic as List
+        List<Resource> resourceList = Resource.findAllByTopicInList(myTopicList)
+        List<Resource> myResourceList= resourceList.findAll {it->
+            it.description.contains(txt)
+        }
+       render(template: '/topic/post',model: [resourceList: myResourceList])
+    }
+
     @Transactional
     def changeUserStatus(Long id){
         render(userDetailService.changeStatus(id) as JSON)
@@ -22,6 +35,9 @@ class UserDetailController {
         [userDetailList:userDetailList]
     }
 
+    def postUser(UserDetail userDetail){
+        render(view: 'userPost',model: userDetailService.getPostByUser(userDetail))
+    }
 
     def dashboard() {
 
@@ -85,11 +101,42 @@ class UserDetailController {
     }
 
     def edit() {
+        UserDetail userDetail = UserDetail.load(session.user.id)
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
         List<Topic> topicList = Topic.list()
         int postCount = Resource.countByCreatedBy(session.user)
-        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList]
+        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList,userDetail:userDetail]
     }
+
+    @Transactional
+    def updateSeriousness(String ser,Long id){
+
+
+         Subscription subscription = Subscription.get(id)
+         if(ser.equals("Serious")){
+             subscription.seriousness = Seriousness.Serious
+         }else if(ser.equals("Casual")){
+             subscription.seriousness = Seriousness.Casual
+         }else {
+             subscription.seriousness = Seriousness.VerySerious
+         }
+        subscription.save(flush: 'true')
+        render(true)
+    }
+
+    @Transactional
+    def updateVisibility(String visibility,Long id){
+        Topic topic = Topic.get(id)
+        if(visibility.equals("Private")){
+            topic.visibility = Visibility.Private
+        }else{
+            topic.visibility = Visibility.Public
+        }
+        topic.save(flush: true)
+        render(true)
+
+    }
+
 
     @Transactional
     def update(UserDetailUpdateCO userDetailUpdateCO) {

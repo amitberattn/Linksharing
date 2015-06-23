@@ -102,7 +102,8 @@ class UserDetailService {
         }
         int totalTopic = Topic.count()
         int postCount = Resource.countByCreatedBy(userDetail)
-        return [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, totalTopic: totalTopic,userDetail: userDetail]
+        List<Resource> resourceList = Resource.findAllByCreatedBy(userDetail)
+        return [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, totalTopic: totalTopic,userDetail: userDetail,resourceList:resourceList]
     }
 
     def trendingTopicsPerPage(params){
@@ -135,6 +136,12 @@ class UserDetailService {
         topic.removeFromSubscription(subscription)
         subscription.delete(flush: true)
         flash.message = 'Unsubscribed sucessfully'
+    }
+
+    def getPostByUser(userDetail){
+        List<Resource> resourceList = Resource.findAllByCreatedBy(userDetail)
+        List<Topic> topicList = Topic.findAllByCreatedBy(userDetail)
+        return [resourceList:resourceList,topicList:topicList]
     }
 
 }

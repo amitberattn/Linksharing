@@ -9,6 +9,21 @@ class SubscriptionController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
+
+
+    def postSearch(String txt,Long resId){
+        println("text= "+txt)
+        println("-------------------------rid="+resId)
+        Resource resource = Resource.get(resId)
+        Topic topic = resource.topic
+        List<Resource> resourceList = Resource.findAllByTopic(topic)
+        List<Resource> myResourceList= resourceList.findAll {it->
+            it.description.contains(txt)
+        }
+        println("myResourceList size="+myResourceList.size())
+        render(template: '/topic/post',model: [resourceList: myResourceList])
+    }
+
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond Subscription.list(params), model: [subscriptionInstanceCount: Subscription.count()]
@@ -16,7 +31,7 @@ class SubscriptionController {
 
     def show() {
         params.max = Math.min(params.max ? params.int('max') : 5, 100)
-        UserDetail userDetail = UserDetail.load(session.user.id)
+        UserDetail userDetail = UserDetail.load(session.user?.id)
         List<Topic> topicInstanceList = Subscription.findAllByUserDetail(userDetail, params).topic as List<Topic>
         int topicInstanceTotal = Subscription.countByUserDetail(userDetail)
         render(view: 'show', model: [topicInstanceList: topicInstanceList, topicInstanceTotal: topicInstanceTotal])

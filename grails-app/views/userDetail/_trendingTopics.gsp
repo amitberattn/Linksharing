@@ -42,8 +42,8 @@
                                 </td>
                             </g:else>
                         </g:if>
-                        <td><a href="href">${topic.subscription.size()}</a></td>
-                        <td><a href="href">${topic.resource.size()}</a></td>
+                        <td><a href="#">${topic.subscription.size()}</a></td>
+                        <td><a href="#">${topic.resource.size()}</a></td>
 
                     </tr>
 

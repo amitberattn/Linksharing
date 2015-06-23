@@ -39,16 +39,17 @@
                                     <td colspan="2"><g:link controller="userDetail" action="unsubscribeTopic"
                                                             id="${subscribe.topic.id}">${subscribe.topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
                                     </td>
-                                    <td><a href="href">${subscribe.topic.subscription.size()}</a></td>
-                                    <td><a href="href">${subscribe.topic.resource.size()}</a></td>
+                                    <td><a href="#">${subscribe.topic.subscription.size()}</a></td>
+                                    <td><a href="#">${subscribe.topic.resource.size()}</a></td>
                                 </tr>
 
                             </table>
-                            <g:select name="seriousness" from="${com.linksharing.Seriousness}"
-                                      value="${subscribe.seriousness}" required="required"></g:select>
+                    %{--        <g:select name="seriousness" from="${com.linksharing.Seriousness}"
+                                      value="${subscribe.seriousness}" required="required"></g:select>--}%
 
-                            <g:select name="topic.visibility" from="${com.linksharing.Visibility}"
-                                      value="${subscribe.topic.visibility}" required="required"></g:select>
+
+
+
                             <div class="edit">
                                 <a href="#" class="invite"><asset:image src="placeholders/email-icon.png"
                                                                         class="modal-form" alt=""/></a>
@@ -57,6 +58,10 @@
                             </div>
                         </article>
                     </g:form>
+                    <g:select name="topic.visibility" from="${com.linksharing.Visibility}" class="visibility" id="${subscribe.topic.id}"
+                              value="${subscribe.topic.visibility}" required="required"></g:select>
+                    <g:select name="seriousness1" from="${com.linksharing.Seriousness}"
+                              value="${subscribe.seriousness}" required="required" class="seriousness" id="${subscribe.id}"></g:select>
                 </li>
                 </g:if>
             </g:each>

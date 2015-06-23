@@ -16,10 +16,14 @@
                         if (data.statusFlag) {
                             $("#" + userId).html("Deactivate");
                             $("#active"+userId).html("Yes")
+                            $("#"+userId).css('background-color','red')
                         }
                         else {
                             $("#" + userId).html("Activate");
+                            $("#" + userId).html();
                             $("#active"+userId).html("No")
+                            $("#"+userId).css('background-color','green')
+
                         }
                     }
                 });
@@ -90,7 +94,7 @@
                 <td><p>${userDetail.firstName}</p></td>
                 <td><p>${userDetail.lastName}</p></td>
                 <td><p id="active${userDetail.id}">${userDetail.active ? "Yes" : "No"}</p></td>
-                <td><p style="cursor: pointer; display: block ;   background-color: darkgreen;border-bottom: 1px black;border-radius: 14px;" class="statusChange" id="${userDetail.id}">${userDetail.active ? "Deactivate" : "Active"}</p></td>
+                <td><p style="cursor: pointer; display: block ; color: white; background-color: ${userDetail.active ? 'red':'darkgreen'};border-bottom: 1px black;border-radius: 14px;" class="statusChange" id="${userDetail.id}">${userDetail.active ? "Deactivate" : "Activate"}</p></td>
             </tr>
         </g:each>
         </tbody>
