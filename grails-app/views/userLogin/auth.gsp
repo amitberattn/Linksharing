@@ -135,6 +135,13 @@
 
         <div class="tab-container-3">
             <div class="tab-content-3" id="tab-3-1">
+
+%{--                <g:if test='${flash.message}'>
+                    <div class='login_message'>aaaaaaaaaaa${flash.message}</div>
+                </g:if>--}%
+                <g:eachError>
+                    <li><g:message error="${it}"/></li>
+                </g:eachError>
                 <form action='${postUrl}' method='POST' id='loginForm' class='cssform' autocomplete='off'>
                     <g:render template="login_form1"></g:render>
                 </form>
