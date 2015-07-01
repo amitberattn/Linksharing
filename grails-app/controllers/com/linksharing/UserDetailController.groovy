@@ -15,6 +15,44 @@ class UserDetailController {
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
 
+    @Secured(['ROLE_ADMIN'])
+    def getUserByType(String type){
+        println("type="+type)
+        List<UserDetail> userList
+        List<UserDetail> userDetailList
+        Role role
+        if(type.equals("all")){
+            userDetailList = UserDetail.findAll()
+            role = new Role(authority: "ROLE_USER")
+            userList = userDetailList.findAll() { it ->
+                List<Role> roleList = it.getAuthorities() as List<Role>
+                roleList.contains(role)
+
+            }
+        }else if(type.equals("active")){
+
+            userDetailList = UserDetail.findAllByActive(true)
+            role = new Role(authority: "ROLE_USER")
+            userList = userDetailList.findAll() { it ->
+                List<Role> roleList = it.getAuthorities() as List<Role>
+                roleList.contains(role)
+
+            }
+
+        }else{
+            userDetailList = UserDetail.findAllByActive(false)
+            role = new Role(authority: "ROLE_USER")
+            userList = userDetailList.findAll() { it ->
+                List<Role> roleList = it.getAuthorities() as List<Role>
+                roleList.contains(role)
+
+            }
+        }
+        println("userlist==== "+userList)
+        render(template: 'listUserTable',model: [userDetailList:userList])
+
+    }
+
     @Secured(["ROLE_USER", "ROLE_ADMIN"])
     def searchInbox(String txt) {
         UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
