@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 @Transactional
 class UserDetailService {
 
+    def springSecurityService
+    def passwordEncoder
     def serviceMethod() {
 
     }
@@ -22,8 +24,8 @@ class UserDetailService {
         userDetail.save(flush: true)
         return [statusFlag:statusFlag]
     }
-    def updateUser(UserDetailUpdateCO userDetailUpdateCO,session,flash,params,grailsApplication){
-        UserDetail userDetail = UserDetail.get(session.user.id)
+    def updateUser(UserDetailUpdateCO userDetailUpdateCO,flash,params,grailsApplication){
+        UserDetail userDetail = UserDetail.get(springSecurityService.principal.id)
         userDetail.firstName = userDetailUpdateCO.firstName
         userDetail.lastName = userDetailUpdateCO.lastName
         userDetail.email = userDetailUpdateCO.email
@@ -35,24 +37,26 @@ class UserDetailService {
             String path = grailsApplication.mainContext.servletContext.getRealPath("images/profile")
             File image = new File("${path}/${userDetail.username}")
             image.bytes = params.photo.bytes
-            session.user = userDetail
+            springSecurityService.reauthenticate userDetail.username
             flash.message = "Hello ${userDetail.username}"
         }else {
             flash.put("error-msg", userDetail)
         }
     }
 
-    def changeUserPassword(session,params,flash){
-        UserDetail userDetail = UserDetail.get(session.user.id)
-
-
-        if (userDetail.password.equals(params.oldPassword)){
+    def changeUserPassword(params,flash){
+        UserDetail userDetail = UserDetail.get(springSecurityService.principal.id)
+        if (passwordEncoder.isPasswordValid(userDetail.password,params.oldPassword,null)){
             if(params.password.equals(params.cnfPassword)){
                 userDetail.password = params.password
-                if(userDetail.save()){
+                if(userDetail.save(flush: true)){
+                    println("pass change")
+                    springSecurityService.reauthenticate(userDetail.username,params.password)
                     flash.messege = "Password updated sucessfully"
                 }
                 else {
+                    println("pass not change")
+
                     flash.messege = "Password not updated"
                 }
             }
@@ -64,11 +68,11 @@ class UserDetailService {
         }
     }
 
-    def getDataforDashBoard(params,session){
+    def getDataforDashBoard(params,user){
 
         params.max = Math.min(params.max ? params.int('max') : 5, 100)
-        UserDetail userDetail = UserDetail.load(session.user?.id)
-        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
+        //UserDetail userDetail = UserDetail.load(session.user?.id)
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(user)
         List<Topic> topicList = Topic.findAllByVisibility(Visibility.Public)
         topicList.sort { a, b ->
             a.resource.size() == b.resource.size() ? 0 : a.resource.size() > b.resource.size() ? -1 : 1
@@ -77,20 +81,28 @@ class UserDetailService {
             topicList = topicList[0..4]
         }
         int totalTopic = Topic.count()
-        int postCount = Resource.countByCreatedBy(session.user)
+        int postCount = Resource.countByCreatedBy(user)
         List<Resource> resourceList =new ArrayList<Resource>()
-        if(userDetail) {
-            if (userDetail.admin) {
-                topicList = Topic.list(params)
-                resourceList = Resource.list()
+        List<Subscription> subsList = Subscription.findAllByUserDetail(user)
+        List<Resource> resList = Resource.findAllByTopicInList(subsList.topic as List<Topic>)
+        List<Resource> resListUnread = resList.findAll{it->
+            ReadingItem readingItem = ReadingItem.findByUserDetailAndResource(user,it)
+            if(readingItem){
+              if(readingItem.isRead == false){
+                  return true
+              }else{
+                  return false
+              }
+            }else{
+                return false
             }
         }
+        println resListUnread
 
-
-        return  [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, totalTopic: totalTopic,userDetail:userDetail,resourceList:resourceList]
+        return  [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, totalTopic: totalTopic,userDetail:user,resourceList:resourceList,resListUnread:resListUnread]
     }
 
-    def userProfile(UserDetail userDetail,session){
+    def userProfile(UserDetail userDetail){
 
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
         List<Topic> topicList = Topic.findAllByCreatedByAndVisibility(userDetail,Visibility.Public)
@@ -118,8 +130,8 @@ class UserDetailService {
         return  [topicList: topicList, totalTopic: totalTopic]
     }
 
-    def subscribeTopicService(Topic topic,session,flash){
-        UserDetail userDetail = UserDetail.findById(session.user.id)
+    def subscribeTopicService(Topic topic,flash){
+        UserDetail userDetail = UserDetail.findById(springSecurityService.principal.id)
         Subscription subscription = new Subscription(seriousness: com.linksharing.Seriousness.Serious, topic: topic, userDetail: userDetail)
         if (subscription.validate()) {
             subscription.save(flush: true, failOnError: true)
@@ -129,8 +141,8 @@ class UserDetailService {
         }
     }
 
-    def unsubscribeTopicService(Topic topic,session,flash){
-        UserDetail userDetail = UserDetail.load(session.user.id)
+    def unsubscribeTopicService(Topic topic,flash){
+        UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
         Subscription subscription = Subscription.findByUserDetailAndTopic(userDetail, topic)
         userDetail.removeFromSubscription(subscription)
         topic.removeFromSubscription(subscription)
@@ -141,7 +153,17 @@ class UserDetailService {
     def getPostByUser(userDetail){
         List<Resource> resourceList = Resource.findAllByCreatedBy(userDetail)
         List<Topic> topicList = Topic.findAllByCreatedBy(userDetail)
-        return [resourceList:resourceList,topicList:topicList]
+        return [resourceList:resourceList,topicList:topicList,userDetail: userDetail]
+    }
+
+    def searchInboxData(userDetail,String txt){
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
+        List<Topic> myTopicList = subscriptionList.topic as List
+        List<Resource> resourceList = Resource.findAllByTopicInList(myTopicList)
+        List<Resource> myResourceList= resourceList.findAll {it->
+            it.description.contains(txt)
+        }
+        return  myResourceList
     }
 
 }

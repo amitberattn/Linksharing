@@ -27,16 +27,16 @@
     <asset:javascript src="js/jquery-1.8.3.min.js"/>
     <asset:javascript src="js/modernizr.custom.js"/>
     <script>
-/*        $(document).ready(function(){
+        /*        $(document).ready(function(){
 
-            $('#search').keydown(function(e){
-                var keyCode = e.which
-                if(keyCode == 13){
-                    console.log("Enter pressed")
-                    console.log(this.value)
-                }
-            })
-        });*/
+         $('#search').keydown(function(e){
+         var keyCode = e.which
+         if(keyCode == 13){
+         console.log("Enter pressed")
+         console.log(this.value)
+         }
+         })
+         });*/
     </script>
 
     <g:layoutHead/>
@@ -81,7 +81,7 @@
                         <a href="${createLink(uri: '/')}"><asset:image src="placeholders/logo.png" alt=""
                                                                        style="height: 58px"/></a>
                     </div><!--logo-image-->
-                    <g:if test="${session.user}">
+                    <sec:ifAnyGranted roles="ROLE_USER,ROLE_ADMIN">
                         <div class="top-banner">
 
                             <nav id="main-nav">
@@ -99,28 +99,28 @@
 
                                     <li><g:remoteLink controller="headerMenu" action="invite" update="link-share-modal"
                                                       class="share-link" title="Share Link"><asset:image
-                                            src="placeholders/link.png"
-                                            class="modal-form"
-                                            alt=""/></g:remoteLink><span></span></li>
-                                    <li><g:remoteLink controller="headerMenu" action="invite" update="doc-share-modal" class="share-document" title="Add document"><asset:image
-                                            src="placeholders/file.png"
-                                            class="modal-form"
-                                            alt=""/></g:remoteLink><span></span></li>
+                                                src="placeholders/link.png"
+                                                class="modal-form"
+                                                alt=""/></g:remoteLink><span></span></li>
+                                    <li><g:remoteLink controller="headerMenu" action="invite" update="doc-share-modal"
+                                                      class="share-document" title="Add document"><asset:image
+                                                src="placeholders/file.png"
+                                                class="modal-form"
+                                                alt=""/></g:remoteLink><span></span></li>
                                     <li>
 
                                         %{--<a href="#"><asset:image src="placeholders/user.png" alt=""/></a><span></span>--}%
                                         <a href="#"><img
-                                                src="${resource(dir: 'images/profile', file: "${session.user?.username ?: 'user.png'}")}"
+                                                src="${resource(dir: 'images/profile', file: "${userDetail?.username ?: 'user.png'}")}"
                                                 alt=""/></a><span></span>
                                         <ul>
                                             <li><g:link controller="userDetail" action="edit">Profile</g:link></li>
-                                            %{--<li><a href="gallery.html">Profile</a></li>--}%
-                                            <g:if test="${session.user.admin == true}">
-                                            <li><g:link controller="userDetail" action="listUser">Users</g:link></li>
-                                            </g:if>
-                                            <li><a href="elements.html">Topics</a></li>
-                                            <li><a href="404.html">Posts</a></li>
-                                            <li><g:link controller="login" action="logout">Logout</g:link></li>
+                                        %{--<li><a href="gallery.html">Profile</a></li>--}%
+                                            <sec:ifAllGranted roles="ROLE_ADMIN">
+                                                <li><g:link controller="userDetail"
+                                                            action="listUser">Users</g:link></li>
+                                            </sec:ifAllGranted>
+                                            <li><g:link controller="logout">Logout</g:link></li>
                                         </ul>
                                     </li>
 
@@ -129,7 +129,7 @@
                             </nav>
 
                         </div><!--top-banner-->
-                    </g:if>
+                    </sec:ifAnyGranted>
 
                 </div><!--header-middle-->
 
@@ -137,7 +137,7 @@
 
             </header><!--page-header-->
             <div id="main-content">
-                <g:if test="${session.user}">
+                <g:if test="${userDetail}">
                     <g:if test="${flash.message}">
                         <label class="message" role="status">${flash.message}</label>
                     </g:if>
@@ -174,7 +174,7 @@
     </div><!--row-fluid-->
 
 </div><!--wrapper-->
-<g:if test="${session.user}">
+<g:if test="${userDetail}">
     <div class="modal-overlay"></div>
 
 

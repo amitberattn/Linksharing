@@ -73,7 +73,9 @@ grails.project.dependency.resolution = {
         compile ":console:1.5.5"
         compile ":remote-pagination:0.4.8"
 
-        //compile ":spring-security-core:2.0-RC5"
+        compile ":spring-security-core:2.0-RC5"
+        //compile ":spring-security-facebook:0.17"
+        compile ":spring-security-oauth-facebook:0.2"
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"

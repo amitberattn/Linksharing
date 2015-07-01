@@ -10,8 +10,9 @@ class HeaderMenuService {
     }
 
     def getSubscribedTopic(Long uid) {
-        UserDetail userDetail = UserDetail.load(uid)
-        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
+        //UserDetail userDetail = UserDetail.load(uid)
+        User user = User.get(uid)
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(user)
         List<Topic> topicList = subscriptionList.topic as List<Topic>
         String renderHtmlString = ""
         topicList.each {it->

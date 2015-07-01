@@ -5,13 +5,14 @@ import grails.transaction.Transactional
 @Transactional
 class SearchService {
 
+    def springSecurityService
     def serviceMethod() {
 
     }
-    def searchResource(params,session){
+    def searchResource(params){
         String searchText = params.search
         println(searchText)
-        UserDetail userDetail = UserDetail.load(session.user.id)
+        UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
         List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
         List<Resource> resourceList = (subscriptionList.topic.resource.flatten() as List<Resource>).findAll{it->
             it.description.contains(searchText)

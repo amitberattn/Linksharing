@@ -5,131 +5,106 @@ import org.springframework.web.multipart.MultipartFile
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.plugin.springsecurity.annotation.Secured
 
 @Transactional(readOnly = true)
 class UserDetailController {
     def userDetailService
+    def springSecurityService
 
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
 
-    def searchInbox(String txt){
-        println("text= "+txt)
-        UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(userDetail)
-        List<Topic> myTopicList = subscriptionList.topic as List
-        List<Resource> resourceList = Resource.findAllByTopicInList(myTopicList)
-        List<Resource> myResourceList= resourceList.findAll {it->
-            it.description.contains(txt)
-        }
-       render(template: '/topic/post',model: [resourceList: myResourceList])
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
+    def searchInbox(String txt) {
+        UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
+        List<Resource> myResourceList = userDetailService.searchInboxData(userDetail,txt)
+        render(template: '/topic/post', model: [resourceList: myResourceList, userDetail: userDetail])
     }
 
+    @Secured(['ROLE_ADMIN'])
     @Transactional
-    def changeUserStatus(Long id){
+    def changeUserStatus(Long id) {
         render(userDetailService.changeStatus(id) as JSON)
     }
 
-    def listUser(){
-        List<UserDetail> userDetailList = UserDetail.findAllByAdmin(false)
-        [userDetailList:userDetailList]
+    @Secured(['ROLE_ADMIN'])
+    def listUser() {
+        List<UserDetail> userDetailList = UserDetail.findAll()
+        Role role = new Role(authority: "ROLE_USER")
+        List<UserDetail> userList = userDetailList.findAll() { it ->
+            List<Role> roleList = it.getAuthorities() as List<Role>
+            roleList.contains(role)
+
+        }
+        [userDetailList: userList]
     }
 
-    def postUser(UserDetail userDetail){
-        render(view: 'userPost',model: userDetailService.getPostByUser(userDetail))
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
+    def postUser(UserDetail userDetail) {
+        render(view: 'userPost', model: userDetailService.getPostByUser(userDetail))
     }
 
+    @Secured(['ROLE_USER', 'ROLE_ADMIN'])
     def dashboard() {
-
-        render(view: 'dashboard', model: userDetailService.getDataforDashBoard(params,session))
+        def user = User.get(springSecurityService.principal.id)
+        render(view: 'dashboard', model: userDetailService.getDataforDashBoard(params, user))
     }
 
-    def profile(UserDetail userDetail){
-        render(view: 'profile', model: userDetailService.userProfile(userDetail,session))
+    @Secured('permitAll')
+    def profile(UserDetail userDetail) {
+        render(view: 'profile', model: userDetailService.userProfile(userDetail))
     }
 
     def trendingTopicsPagination() {
         render(template: 'topicsAdmin', userDetailService.trendingTopicsPerPage(params))
     }
 
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
     def subscribeTopic(Topic topic) {
-        userDetailService.subscribeTopicService(topic,session,flash)
+        userDetailService.subscribeTopicService(topic, flash)
         redirect(action: 'dashboard')
     }
 
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
     def unsubscribeTopic(Topic topic) {
-        userDetailService.unsubscribeTopicService(topic,session,params)
+        userDetailService.unsubscribeTopicService(topic, params)
         redirect(action: 'dashboard')
     }
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond UserDetail.list(params), model: [userDetailInstanceCount: UserDetail.count()]
-    }
-
-    def show(UserDetail userDetailInstance) {
-        respond userDetailInstance
-    }
-
-    def create() {
-        respond new UserDetail(params)
-    }
-
-    @Transactional
-    def save(UserDetail userDetailInstance) {
-        if (userDetailInstance == null) {
-            notFound()
-            return
-        }
-
-        if (userDetailInstance.hasErrors()) {
-            respond userDetailInstance.errors, view: 'create'
-            return
-        }
-
-        userDetailInstance.save flush: true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'userDetail.label', default: 'UserDetail'), userDetailInstance.id])
-                redirect userDetailInstance
-            }
-            '*' { respond userDetailInstance, [status: CREATED] }
-        }
-    }
-
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     def edit() {
-        UserDetail userDetail = UserDetail.load(session.user.id)
-        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(session.user?.id))
+        UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
+        List<Subscription> subscriptionList = Subscription.findAllByUserDetail(UserDetail.load(springSecurityService.principal.id))
         List<Topic> topicList = Topic.list()
-        int postCount = Resource.countByCreatedBy(session.user)
-        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList,userDetail:userDetail]
+        int postCount = Resource.countByCreatedBy(userDetail)
+        [my_subscriptions: subscriptionList, postNo: postCount, topicList: topicList, userDetail: userDetail]
     }
 
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
-    def updateSeriousness(String ser,Long id){
-
-
-         Subscription subscription = Subscription.get(id)
-         if(ser.equals("Serious")){
-             subscription.seriousness = Seriousness.Serious
-         }else if(ser.equals("Casual")){
-             subscription.seriousness = Seriousness.Casual
-         }else {
-             subscription.seriousness = Seriousness.VerySerious
-         }
+    def updateSeriousness(String ser, Long id) {
+        Subscription subscription = Subscription.get(id)
+        if (ser.equals("Serious")) {
+            subscription.seriousness = Seriousness.Serious
+        } else if (ser.equals("Casual")) {
+            subscription.seriousness = Seriousness.Casual
+        } else {
+            subscription.seriousness = Seriousness.VerySerious
+        }
         subscription.save(flush: 'true')
         render(true)
     }
 
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
-    def updateVisibility(String visibility,Long id){
+    def updateVisibility(String visibility, Long id) {
         Topic topic = Topic.get(id)
-        if(visibility.equals("Private")){
+        if (visibility.equals("Private")) {
             topic.visibility = Visibility.Private
-        }else{
+        } else {
             topic.visibility = Visibility.Public
         }
         topic.save(flush: true)
@@ -137,48 +112,20 @@ class UserDetailController {
 
     }
 
-
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
     def update(UserDetailUpdateCO userDetailUpdateCO) {
 
-        userDetailService.updateUser(userDetailUpdateCO, session, flash, params, grailsApplication)
+        userDetailService.updateUser(userDetailUpdateCO, flash, params, grailsApplication)
         redirect(controller: 'userDetail', action: 'dashboard')
     }
 
+    @Secured(["ROLE_USER", "ROLE_ADMIN"])
     @Transactional
     def changePassword() {
-        userDetailService.changeUserPassword(session, params, flash)
+        userDetailService.changeUserPassword(params, flash)
         redirect(controller: 'userDetail', action: 'edit')
 
-    }
-
-    @Transactional
-    def delete(UserDetail userDetailInstance) {
-
-        if (userDetailInstance == null) {
-            notFound()
-            return
-        }
-
-        userDetailInstance.delete flush: true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'UserDetail.label', default: 'UserDetail'), userDetailInstance.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'userDetail.label', default: 'UserDetail'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NOT_FOUND }
-        }
     }
 }
 
