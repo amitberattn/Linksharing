@@ -1,12 +1,14 @@
 <div id="fb-root"></div>
 <script>
-    (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=732451196865250";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=732451196865250";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
 <div class="tab-container-1">
     <ul>
         <g:if test="${resourceList?.size() > 0}">
@@ -22,11 +24,14 @@
                         <div class="entry-content">
                             <p class="entry-description">${resourceItem.description}</p>
                             <span class="entry-date">
-                <g:if test="${resourceItem instanceof com.linksharing.LinkShare}">
-                                <div class="fb-share-button" data-href="${resourceItem.url}" data-layout="button_count"></div>
-                </g:if>
+                                <g:if test="${resourceItem instanceof com.linksharing.LinkShare}">
+                                    <div class="fb-share-button" data-href="${resourceItem.url}"
+                                         data-layout="button_count"></div>
+                                </g:if>
                                 <g:else>
-                                    <div class="fb-share-button" data-href="http://localhost:8080/linksharing/images/topic/${resourceItem.fileName}" data-layout="button_count"></div>
+                                    <div class="fb-share-button"
+                                         data-href="http://localhost:8080/linksharing/images/topic/${resourceItem.fileName}"
+                                         data-layout="button_count"></div>
                                 </g:else>
                                 <a href="#"><asset:image src="placeholders/Linkedin.png" alt=""/></a>
                                 <a href="#"><asset:image src="placeholders/googleplus.png" alt=""/></a>
@@ -34,7 +39,7 @@
                                 <div class="modify">
                                     <g:link controller="resource" action="show"
                                             id="${resourceItem.id}">View post</g:link>
-                                    <g:if test="${session.user?.id in ((((resourceItem.readingItem as List).findAll {
+                                    <g:if test="${userDetail?.id in ((((resourceItem.readingItem as List).findAll {
                                         it.isRead == true
                                     }).userDetail as List).id as List<Long>)}">
                                         <a style="cursor: pointer" id="${resourceItem.id}"

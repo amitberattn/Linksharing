@@ -23,4 +23,4 @@
     <select name="topic" class="form-input" id="doc-share-modal">
     </select>
 </p>
-<g:field type="hidden" id="createdBy" name="createdBy.id"  value="${session.user?.id}"/>
+%{--<g:field type="hidden" id="createdBy" name="createdBy.id"  value="${session.user?.id}"/>--}%

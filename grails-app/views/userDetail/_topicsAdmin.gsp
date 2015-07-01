@@ -28,10 +28,10 @@
                         <tr class="entry-content">
                             <g:if test="${topic.subscription != null}">
 
-                                <g:if test="${session.user.id in topic.subscription.userDetail.id.asList()}">
+                                <g:if test="${userDetail?.id in topic.subscription.userDetail.id.asList()}">
                                     <td colspan="2">
                                         <g:link controller="userDetail" action="unsubscribeTopic"
-                                                id="${topic.id}">${topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
+                                                id="${topic.id}">${topic.createdBy.id == userDetail?.id ? "" : "Unsubscribe"}</g:link>
                                     </td>
                                 </g:if>
                                 <g:else>
@@ -49,17 +49,14 @@
                     </table>
                     <g:select name="topic.seriousness" from="${com.linksharing.Seriousness}"
                               value="${com.linksharing.Seriousness.Serious}" required="required"></g:select>
-                    <g:if test="${topic.createdBy.id == session.user.id || session.user.admin}">
+
                         <g:select name="topic.visibility" from="${com.linksharing.Visibility}"
                                   value="${topic.visibility}" required="required"></g:select>
-                    </g:if>
                     <div class="edit">
                         <a href="#" class="invite"><asset:image src="placeholders/email-icon.png"
                                                                 class="modal-form" alt=""/></a>
-                        <g:if test="${topic.createdBy.id == session.user.id || session.user.admin}">
                             <a href="#" class="edit-topic"><asset:image src="placeholders/editor.png" alt=""/></a>
                             <a href="#"><asset:image src="placeholders/trash.png" alt=""/></a>
-                        </g:if>
                     </div>
                 </article>
             </g:form>

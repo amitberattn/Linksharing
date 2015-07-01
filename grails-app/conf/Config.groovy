@@ -128,3 +128,48 @@ grails {
                  "mail.smtp.socketFactory.fallback":"false"]
     }
 }
+
+
+
+
+// Added by the Spring Security Core plugin:
+grails.plugin.springsecurity.requestCache.createSession = false
+grails.plugin.springsecurity.logout.postOnly = false
+grails.plugin.springsecurity.successHandler.defaultTargetUrl = '/userDetail/dashboard'
+grails.plugin.springsecurity.failureHandler.defaultFailureUrl = '/'
+grails.plugin.springsecurity.successHandler.defaultSuccessUrl = '/userDetail/dashboard'
+grails.plugin.springsecurity.auth.loginFormUrl = '/userLogin/auth'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.linksharing.User'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.linksharing.UserRole'
+grails.plugin.springsecurity.authority.className = 'com.linksharing.Role'
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+	'/':                ['permitAll'],
+	'/index':           ['permitAll'],
+	'/index.gsp':       ['permitAll'],
+	'/assets/**':       ['permitAll'],
+	'/**/js/**':        ['permitAll'],
+	'/**/css/**':       ['permitAll'],
+	'/**/images/**':    ['permitAll'],
+	'/**/favicon.ico':  ['permitAll']
+]
+
+
+
+grails.plugin.springsecurity.facebook.domain.classname='FacebookUser'
+grails.plugin.springsecurity.facebook.appId='732451196865250'
+grails.plugin.springsecurity.facebook.secret='ab287a847dc10995aaf9f60f5d9ea0f4'
+
+
+
+oauth {
+    providers {
+        facebook {
+            api = org.scribe.builder.api.FacebookApi
+            key = '732451196865250'
+            secret = 'ab287a847dc10995aaf9f60f5d9ea0f4'
+            successUri = '/oauth/facebook/success'
+            failureUri = '/oauth/facebook/error'
+            callback = "/login/auth"
+        }
+    }
+}

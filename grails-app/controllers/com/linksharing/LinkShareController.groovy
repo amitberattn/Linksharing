@@ -4,6 +4,7 @@ package com.linksharing
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.plugin.springsecurity.annotation.Secured
 
 @Transactional(readOnly = true)
 class LinkShareController {
@@ -24,11 +25,13 @@ class LinkShareController {
         respond new LinkShare(params)
     }
 
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     @Transactional
-    def save(LinkShare linkShareInstance) {
-    withForm {
-        linkShareService.saveLink(linkShareInstance,flash,session)
-    }
+    def save(params) {
+        println("------------------------>  "+params.url)
+        println("------------------------>  "+params.description)
+        println("------------------------>  "+params.topic)
+        linkShareService.saveLink(params,flash)
         redirect(controller: "userDetail", action: 'dashboard')
     }
 

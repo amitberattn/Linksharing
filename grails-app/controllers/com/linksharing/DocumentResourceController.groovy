@@ -1,15 +1,19 @@
 package com.linksharing
 
-
+import javax.print.Doc
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.plugin.springsecurity.annotation.Secured
 
 @Transactional(readOnly = true)
 class DocumentResourceController {
+    def springSecurityService
+    def documentResourceService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     def download(Long id){
         Resource documentResource = Resource.load(id)
         String path = grailsApplication.mainContext.servletContext.getRealPath("images/topic")
@@ -48,21 +52,12 @@ class DocumentResourceController {
     def create() {
         respond new DocumentResource(params)
     }
-
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     @Transactional
     def save(DocumentResource documentsResourceInstance) {
+        UserDetail userDetail = UserDetail.get(springSecurityService.principal.id)
         withForm {
-            def doc = request.getFile('filePath')
-            documentsResourceInstance.fileName = doc.originalFilename
-            if (documentsResourceInstance.hasErrors()) {
-                flash.put("error-msg", documentsResourceInstance)
-            }else if(documentsResourceInstance.save(flush: true)) {
-                String path= grailsApplication.mainContext.servletContext.getRealPath("images/topic")
-                doc.transferTo(new File("${path}/${doc.originalFilename}"))
-                flash.message = "File Resource successfully added!"
-            }else {
-                flash.put("error-msg", documentsResourceInstance)
-            }
+            documentResourceService.saveDocResource(grailsApplication,params,flash,userDetail,request)
         }
         redirect(controller: "userDetail", action: 'dashboard')
     }
@@ -70,6 +65,7 @@ class DocumentResourceController {
     def edit(DocumentResource documentResourceInstance) {
         respond documentResourceInstance
     }
+
 
     @Transactional
     def update(DocumentResource documentResourceInstance) {

@@ -3,6 +3,22 @@ package linksharing
 class ApplicationFilters {
 
     def filters = {
+        logRequest(controller:'*',action:'*'){
+            before= {
+                println("controller : " + controllerName)
+                println("action : " + actionName)
+            }
+        }
+
+        requestHeadersFilter(controller: '*', action: '*') {
+            after = {
+                response.setHeader("Pragma", "no-cache")
+                response.setDateHeader("Expires", 1L)
+                response.setHeader("Cache-Control", "no-cache")
+                response.addHeader("Cache-Control", "no-store")
+            }
+        }
+/*
 
         beforeLogin(controller: 'login', action: 'index', invert: true) {
             before = {
@@ -15,8 +31,11 @@ class ApplicationFilters {
             }
 
         }
-        /*| forgotPassword | forgotPasswordEmailSet | forgotPasswordReset | resetPasswordPage*/
- /*       beforeLogin(controller: 'userDetail | invitation | resource | topic') {
+        */
+/*| forgotPassword | forgotPasswordEmailSet | forgotPasswordReset | resetPasswordPage*//*
+
+ */
+/*       beforeLogin(controller: 'userDetail | invitation | resource | topic') {
             before = {
                 if (!session.user) {
                     println(controllerName)
@@ -26,7 +45,8 @@ class ApplicationFilters {
                 }
             }
 
-        }*/
+        }*//*
+
 
         requestHeadersFilter(controller: '*', action: '*') {
             after = {
@@ -46,6 +66,7 @@ class ApplicationFilters {
                 }
             }
         }
+*/
 
     }
 }

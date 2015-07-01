@@ -4,10 +4,80 @@
     <meta name="layout" content="master">
     <g:set var="entityName" value="${message(code: 'login.label', default: 'Home Page')}"/>
     <title><g:message code="default.list.label" args="[entityName]"/></title>
+    <script>
+        $(document).ready(function(){
+                    console.log("postUrl= ${postUrl}")
+                }
+
+        );
+    </script>
 </head>
 
 <body>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '732451196865250', // App ID
+            channelUrl: '//localhost:8080/linksharing', // Channel File
+            status: true, // check login status
+            cookie: true, // enable cookies to allow the server to access the session
+            xfbml: true  // parse XFBML
+        });
+        // Additional initialization code here
+    };
+    // Load the SDK Asynchronously
+    (function (data) {
+        var jse, id = 'facebook-jssdk', ref = data.getElementsByTagName('script')[0];
+        if (data.getElementById(id)) {
+            return;
+        }
+        jse = data.createElement('script');
+        jse.id = id;
+        jse.async = true;
+        jse.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=732451196865250";
+        ref.parentNode.insertBefore(jse, ref);
+    }(document));
 
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            if (typeof(response) == 'undefined') {
+                return
+            }
+            else {
+                var uid = response.authResponse.userID;
+                var accessToken = response.authResponse.accessToken;
+                getProfileInfoAndLogin(accessToken);
+            }
+
+        });
+
+        function getProfileInfoAndLogin(token) {
+            var url = "${createLink(controller: 'userLogin', action: 'demoFacebook')}";
+            var urlHome = "${createLink(controller: 'userLogin',action: 'auth')}"
+            FB.api("/me", "GET", function (response) {
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "html",
+                    data: {
+                        fbEmail: response.email,
+                        name: response.name,
+                        firstName: response.first_name,
+                        lastName: response.last_name,
+                        uid: response.id
+                    }
+                }).done(function (data) {
+                    if (data == "true") {
+                        window.location = urlHome
+                    }
+                    else {
+                        alert("failure")
+                    }
+                });
+            });
+        }
+    }
+</script>
 
 <!--row-fluid-->
 
@@ -20,7 +90,7 @@
         </div>
 
         <div class="tab-container-1">
-            <g:form controller="login" action="forgotPasswordEmailSet">
+            <g:form controller="userLogin" action="forgotPasswordEmailSet">
                 <p class="input-block ">
                     <label class="required" for="loginid">
                         <g:message code="userDetail.email.label" default="Email" />
@@ -64,15 +134,12 @@
 
         <div class="tab-container-3">
             <div class="tab-content-3" id="tab-3-1">
-                <g:form useToken="true" class="clearfix log-form" controller="login" action="login" name="contact-form">
-                    <g:render template="login_form"/>
-
-                    <p class="contact-button clearfix">
-                        <g:submitButton name="submit-contact" class="submit-btn" value="Login"/>
-                    </p>
+                <form action='${postUrl}' method='POST' id='loginForm' class='cssform' autocomplete='off'>
+                    <g:render template="login_form1"></g:render>
+                </form>
 
                     <div class="clear"></div>
-                </g:form>
+
             </div><!--tab-content-3-->
             <div class="tab-content-3" id="tab-3-2">
                 <g:uploadForm useToken="true" class="clearfix reg-form" controller="login" action="register" name="contact-form">

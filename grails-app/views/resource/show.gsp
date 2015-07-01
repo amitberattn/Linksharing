@@ -21,8 +21,6 @@
                 click: function (score, evt) {
                     var resourceId = $(".star").attr('rid')
                     var rating = score
-                    console.log("rid=" + resourceId)
-
                     $.ajax({
                         url: "${createLink(controller: "resourceRating",action: "rating")}",
                         data: {id: resourceId, rate: score},

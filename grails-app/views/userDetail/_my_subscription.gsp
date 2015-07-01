@@ -37,7 +37,7 @@
                                 </tr>
                                 <tr class="entry-content">
                                     <td colspan="2"><g:link controller="userDetail" action="unsubscribeTopic"
-                                                            id="${subscribe.topic.id}">${subscribe.topic.createdBy.id == session.user?.id ? "" : "Unsubscribe"}</g:link>
+                                                            id="${subscribe.topic.id}">${subscribe.topic.createdBy.id == userDetail?.id ? "" : "Unsubscribe"}</g:link>
                                     </td>
                                     <td><a href="#">${subscribe.topic.subscription.size()}</a></td>
                                     <td><a href="#">${subscribe.topic.resource.size()}</a></td>

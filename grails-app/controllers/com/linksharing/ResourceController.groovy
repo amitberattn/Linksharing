@@ -1,24 +1,26 @@
 package com.linksharing
 
-
-
+import grails.plugin.springsecurity.annotation.Secured
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class ResourceController {
+    def springSecurityService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     @Transactional
     def updateDesc(Long id,String desc){
-        println("rid="+id)
-        println("desc="+desc)
         Resource resource = Resource.get(id)
         resource.description = desc
         resource.save(flush: true)
         render(true)
     }
+
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     @Transactional
     def deleteResource(Resource resource){
         resource.delete(flush: true)
@@ -26,105 +28,18 @@ class ResourceController {
         redirect(controller: 'subscription',action: 'show')
     }
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Resource.list(params), model:[resourceInstanceCount: Resource.count()]
-    }
-
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     def show(Resource resourceInstance) {
         params.max = Math.min(params.max ? params.int('max') : 5,100)
         List<Topic> topicList = Topic.list(params)
         int totalTopic = Topic.count()
         int score = 0
-        UserDetail userDetail = UserDetail.load(session.user.id)
+        UserDetail userDetail = UserDetail.load(springSecurityService.principal.id)
         ResourceRating resourceRating = ResourceRating.findByUserDetailAndResource(userDetail,resourceInstance)
         if(resourceRating){
             score = resourceRating.score
         }
-        [resourceInstance: resourceInstance, topicList:topicList,totalTopic:totalTopic,score:score]
+        [resourceInstance: resourceInstance, topicList:topicList,totalTopic:totalTopic,score:score,userDetail:userDetail]
     }
 
-
-    def create() {
-        respond new Resource(params)
-    }
-
-    @Transactional
-    def save(Resource resourceInstance) {
-        if (resourceInstance == null) {
-            notFound()
-            return
-        }
-
-        if (resourceInstance.hasErrors()) {
-            respond resourceInstance.errors, view:'create'
-            return
-        }
-
-        resourceInstance.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'resource.label', default: 'Resource'), resourceInstance.id])
-                redirect resourceInstance
-            }
-            '*' { respond resourceInstance, [status: CREATED] }
-        }
-    }
-
-    def edit(Resource resourceInstance) {
-        respond resourceInstance
-    }
-
-    @Transactional
-    def update(Resource resourceInstance) {
-        if (resourceInstance == null) {
-            notFound()
-            return
-        }
-
-        if (resourceInstance.hasErrors()) {
-            respond resourceInstance.errors, view:'edit'
-            return
-        }
-
-        resourceInstance.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'Resource.label', default: 'Resource'), resourceInstance.id])
-                redirect resourceInstance
-            }
-            '*'{ respond resourceInstance, [status: OK] }
-        }
-    }
-
-    @Transactional
-    def delete(Resource resourceInstance) {
-
-        if (resourceInstance == null) {
-            notFound()
-            return
-        }
-
-        resourceInstance.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Resource.label', default: 'Resource'), resourceInstance.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'resource.label', default: 'Resource'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
 }

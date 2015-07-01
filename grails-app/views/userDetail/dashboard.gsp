@@ -5,9 +5,9 @@
         $(document).ready(function () {
 
 
-           $('#inboxSearchInput').keypress(function (e) {
+            $('#inboxSearchInput').keypress(function (e) {
                 var key = e.which;
-                if(key == 13)  // the enter key code
+                if (key == 13)  // the enter key code
                 {
                     console.log("enter press");
                     console.log($(this).val())
@@ -15,8 +15,8 @@
 
                     $.ajax({
                         url: "${createLink(controller: "userDetail",action: "searchInbox") }",
-                        data: {txt:searchText},
-                        success: function(resp){
+                        data: {txt: searchText},
+                        success: function (resp) {
                             $('#searchDiv').empty();
                             $('#searchDiv').html(resp);
                         }
@@ -27,35 +27,33 @@
             });
 
 
+//            change seriosness by ajax
 
-//            chaange seriosness by ajax
-
-            $('.seriousness').change(function(){
+            $('.seriousness').change(function () {
                 var ser = $(this).val();
                 var id = $(this).attr('id');
                 $.ajax({
                     url: "${createLink(controller: "userDetail",action: "updateSeriousness") }",
-                    data: {s:ser,id:id},
-                    success: function(resp){
-                        $("#"+id).val(ser)
+                    data: {s: ser, id: id},
+                    success: function (resp) {
+                        $("#" + id).val(ser)
                     }
                 });
             });
 
 // change privacy by ajax
 
-            $('.visibility').change(function(){
+            $('.visibility').change(function () {
                 var visibility = $(this).val();
                 var id = $(this).attr('id');
                 $.ajax({
                     url: "${createLink(controller: "userDetail",action: "updateVisibility") }",
-                    data: {visibility:visibility,id:id},
-                    success: function(resp){
-                        $("#"+id).val(visibility)
+                    data: {visibility: visibility, id: id},
+                    success: function (resp) {
+                        $("#" + id).val(visibility)
                     }
                 });
             });
-
 
 
             $(".markread").click(function () {
@@ -86,7 +84,8 @@
     <div class="widget kopa-article-list-widget">
         <g:render template="userInformation"/>
     </div>
-    <g:if test="${session.user.admin == false}">
+%{--<g:if test="${user?.admin == false}">--}%
+    <sec:ifAllGranted roles="ROLE_USER">
         <div class="widget kopa-article-list-widget">
             <g:render template="my_subscription"/>
         </div><!--kopa-article-list-widget-->
@@ -101,15 +100,16 @@
                 </div>
             </div><!--tab-container-1-->
         </div><!--kopa-article-list-widget-->
-    </g:if>
-    <g:else>
-%{--             <div class="widget kopa-article-list-widget">
-              <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Topics</span></h3>
-              <div class="tab-container-1">
-                <div id="adminTopics">
-                     <g:render template="topicsAdmin"></g:render>
-                 </div>
-              </div>--}%
+    </sec:ifAllGranted>
+%{--</g:if>--}%
+    <sec:ifAllGranted roles="ROLE_ADMIN">
+    %{--             <div class="widget kopa-article-list-widget">
+                  <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Topics</span></h3>
+                  <div class="tab-container-1">
+                    <div id="adminTopics">
+                         <g:render template="topicsAdmin"></g:render>
+                     </div>
+                  </div>--}%
         <div class="widget kopa-article-list-widget">
             <g:render template="my_subscription"/>
         </div><!--kopa-article-list-widget-->
@@ -125,32 +125,38 @@
             </div><!--tab-container-1-->
         </div>
 
-    </g:else>
+    </sec:ifAllGranted>
 </div><!--widget-area-3-->
 
 <!--row-fluid-->
 
-    <div id="main-col">
+<div id="main-col">
 
-        <div class="widget kopa-article-list-widget">
-            <g:if test="${session.user.admin == false}">
-                <h3 class="widget-title"><span class="title-text">Inbox</span>
-                <span><g:textField name="inboxSearch" value="" placeholder="Search in inbox" style="float: right" id="inboxSearchInput"></g:textField></span></h3>
-                <div id="searchDiv">
-                <g:render template="inbox"></g:render>
-                </div>
-            </g:if>
-            <g:else>
-                <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Post</span></h3>
-                <g:render template="/topic/post"></g:render>
-            </g:else>
+    <div class="widget kopa-article-list-widget">
+    %{--<g:if test="${session.user.admin == false}">--}%
+        <sec:ifAllGranted roles="ROLE_USER">
+            <h3 class="widget-title"><span class="title-text">Inbox</span>
+                <span><g:textField name="inboxSearch" value="" placeholder="Search in inbox" style="float: right"
+                                   id="inboxSearchInput"></g:textField></span></h3>
 
-        </div><!--kopa-article-list-widget-->
+            <div id="searchDiv">
+                %{--<g:render template="inbox"></g:render>--}%
+                <g:render template="/topic/post" model="[resourceList: resListUnread]"></g:render>
+            </div>
 
-    </div><!--main-col-->
+        </sec:ifAllGranted>
+
+    %{--</g:if>--}%
+        <sec:ifAllGranted roles="ROLE_ADMIN">
+            <h3 class="widget-title"><span class="title-line"></span><span class="title-text">Post</span></h3>
+            <g:render template="/topic/post"></g:render>
+        </sec:ifAllGranted>
+    </div><!--kopa-article-list-widget-->
+
+</div><!--main-col-->
 
 
-    <div class="clear"></div>
+<div class="clear"></div>
 
 </body>
 </html>
