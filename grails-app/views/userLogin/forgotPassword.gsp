@@ -4,6 +4,13 @@
     <meta name="layout" content="master">
     <g:set var="entityName" value="${message(code: 'login.label', default: 'Home Page')}"/>
     <title><g:message code="default.list.label" args="[entityName]"/></title>
+    <script>
+        $(document).ready(function(){
+                    console.log("postUrl= ${postUrl}")
+                }
+
+        );
+    </script>
 </head>
 
 <body>
@@ -127,7 +134,7 @@
 
         <div class="tab-container-3">
             <div class="tab-content-3" id="tab-3-1">
-                <form action='/linksharing/userLogin/auth' method='POST' id='loginForm' class='cssform' autocomplete='off'>
+                <form action='${postUrl}' method='POST' id='loginForm' class='cssform' autocomplete='off'>
                     <g:render template="login_form1"></g:render>
                 </form>
 

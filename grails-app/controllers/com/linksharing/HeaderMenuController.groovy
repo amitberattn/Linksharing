@@ -6,7 +6,7 @@ class HeaderMenuController {
     def springSecurityService
 
     def index() {}
-   @Secured(['ROLE_USER','ADMIN_ROLE'])
+   @Secured(['ROLE_USER','ROLE_ADMIN'])
     def invite(){
         render(headerMenuService.getSubscribedTopic(springSecurityService.principal.id))
     }
