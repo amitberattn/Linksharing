@@ -35,7 +35,7 @@ def topicService
 
     }
 
-
+    @Secured(["ROLE_USER","ROLE_ADMIN"])
     @Transactional
     def delete(Topic topicInstance) {
 
